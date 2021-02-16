@@ -5,15 +5,14 @@
     int flag = 0;
 %}
 
-one "1"
-zero "0"
-powerof2 [{one}{zero}*]
+powerof2 [1][0]*
+not2 [1][01]*
+
 %%
 {powerof2}$ { printf("The given number is a power of two.\n");}
+{not2} {printf("This number is not a power of two");}
 %%
 main(int argc, char **argv)
 {
     yylex();
-    if(flag==0)
-        printf("The given number is NOT a power of 2");
 }

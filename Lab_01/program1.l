@@ -1,3 +1,5 @@
+/* detects tokens from an arithmetic expression */
+
 %{
     #include<stdio.h>
 %}
