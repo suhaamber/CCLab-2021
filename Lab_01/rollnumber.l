@@ -4,7 +4,7 @@
 
 %{
     #include<stdio.h>
-    int flag = 0;
+    int flag = 1;
 %}
 
 year [2][0][0-9][0-9]
@@ -16,18 +16,26 @@ id {year}{spec}{thesis}{rollno}{campus}
 
 %%
 
-{year} {printf("Year of joining: %s\n", yytext);}
-{spec} {printf("Specialization: %s\n", yytext);}
-{thesis} {printf("PS/TS: %s\n", yytext);}
-{rollno} {printf("Roll Number: %s\n", yytext);}
-{campus} {printf("Campus: %s\n", yytext);}}
-. {flag=1;}
+{id}    { printf("Year of joining: %.4s\n", yytext);
+          printf("Specialization: %.2s\n", yytext+4);
+          printf("PS/TS: %.2s\n", yytext+6);
+          printf("Roll Number: %.4s\n", yytext+8);
+          printf("Campus: %.1s\n", yytext+12);
+        }
+.       {if(flag==1)
+            {
+                printf("invalid ID");
+                flag =0; 
+            }
+        }
 
 %%
 
 main(int argc, char **argv)
 {
     yylex();
-    if(flag==1)
-        printf("invalid ID");
+    if(flag==0)
+    {
+        printf("Invalid ID");
+    }
 }
