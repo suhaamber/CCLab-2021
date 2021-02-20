@@ -1,0 +1,219 @@
+Terminals unused in grammar
+
+    EQ
+    OP
+
+
+Grammar
+
+    0 $accept: prm $end
+
+    1 prm: HEADER INT MAIN LB RB LCB BODY RCB
+
+    2 BODY: DECLARATION_STATEMENTS
+
+    3 DECLARATION_STATEMENTS: DECLARATION_STATEMENT DECLARATION_STATEMENTS
+    4                       | DECLARATION_STATEMENT
+
+    5 DECLARATION_STATEMENT: INT VAR_LIST SC
+
+    6 VAR_LIST: VAR COMA VAR_LIST
+    7         | VAR
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    HEADER (258) 1
+    INT (259) 1 5
+    MAIN (260) 1
+    LB (261) 1
+    RB (262) 1
+    LCB (263) 1
+    RCB (264) 1
+    SC (265) 5
+    COMA (266) 6
+    VAR (267) 6 7
+    EQ (268)
+    OP (269)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (15)
+        on left: 0
+    prm (16)
+        on left: 1
+        on right: 0
+    BODY (17)
+        on left: 2
+        on right: 1
+    DECLARATION_STATEMENTS (18)
+        on left: 3 4
+        on right: 2 3
+    DECLARATION_STATEMENT (19)
+        on left: 5
+        on right: 3 4
+    VAR_LIST (20)
+        on left: 6 7
+        on right: 5 6
+
+
+State 0
+
+    0 $accept: . prm $end
+
+    HEADER  shift, and go to state 1
+
+    prm  go to state 2
+
+
+State 1
+
+    1 prm: HEADER . INT MAIN LB RB LCB BODY RCB
+
+    INT  shift, and go to state 3
+
+
+State 2
+
+    0 $accept: prm . $end
+
+    $end  shift, and go to state 4
+
+
+State 3
+
+    1 prm: HEADER INT . MAIN LB RB LCB BODY RCB
+
+    MAIN  shift, and go to state 5
+
+
+State 4
+
+    0 $accept: prm $end .
+
+    $default  accept
+
+
+State 5
+
+    1 prm: HEADER INT MAIN . LB RB LCB BODY RCB
+
+    LB  shift, and go to state 6
+
+
+State 6
+
+    1 prm: HEADER INT MAIN LB . RB LCB BODY RCB
+
+    RB  shift, and go to state 7
+
+
+State 7
+
+    1 prm: HEADER INT MAIN LB RB . LCB BODY RCB
+
+    LCB  shift, and go to state 8
+
+
+State 8
+
+    1 prm: HEADER INT MAIN LB RB LCB . BODY RCB
+
+    INT  shift, and go to state 9
+
+    BODY                    go to state 10
+    DECLARATION_STATEMENTS  go to state 11
+    DECLARATION_STATEMENT   go to state 12
+
+
+State 9
+
+    5 DECLARATION_STATEMENT: INT . VAR_LIST SC
+
+    VAR  shift, and go to state 13
+
+    VAR_LIST  go to state 14
+
+
+State 10
+
+    1 prm: HEADER INT MAIN LB RB LCB BODY . RCB
+
+    RCB  shift, and go to state 15
+
+
+State 11
+
+    2 BODY: DECLARATION_STATEMENTS .
+
+    $default  reduce using rule 2 (BODY)
+
+
+State 12
+
+    3 DECLARATION_STATEMENTS: DECLARATION_STATEMENT . DECLARATION_STATEMENTS
+    4                       | DECLARATION_STATEMENT .
+
+    INT  shift, and go to state 9
+
+    $default  reduce using rule 4 (DECLARATION_STATEMENTS)
+
+    DECLARATION_STATEMENTS  go to state 16
+    DECLARATION_STATEMENT   go to state 12
+
+
+State 13
+
+    6 VAR_LIST: VAR . COMA VAR_LIST
+    7         | VAR .
+
+    COMA  shift, and go to state 17
+
+    $default  reduce using rule 7 (VAR_LIST)
+
+
+State 14
+
+    5 DECLARATION_STATEMENT: INT VAR_LIST . SC
+
+    SC  shift, and go to state 18
+
+
+State 15
+
+    1 prm: HEADER INT MAIN LB RB LCB BODY RCB .
+
+    $default  reduce using rule 1 (prm)
+
+
+State 16
+
+    3 DECLARATION_STATEMENTS: DECLARATION_STATEMENT DECLARATION_STATEMENTS .
+
+    $default  reduce using rule 3 (DECLARATION_STATEMENTS)
+
+
+State 17
+
+    6 VAR_LIST: VAR COMA . VAR_LIST
+
+    VAR  shift, and go to state 13
+
+    VAR_LIST  go to state 19
+
+
+State 18
+
+    5 DECLARATION_STATEMENT: INT VAR_LIST SC .
+
+    $default  reduce using rule 5 (DECLARATION_STATEMENT)
+
+
+State 19
+
+    6 VAR_LIST: VAR COMA VAR_LIST .
+
+    $default  reduce using rule 6 (VAR_LIST)
