@@ -5,7 +5,7 @@ Grammar
 
     0 $accept: prm $end
 
-    1 prm: HEADER INT MAIN LB RB LCB BODY RCB
+    1 prm: HEADER TYPE MAIN LB RB LCB BODY RCB
 
     2 BODY: DECLARATION_STATEMENTS PROGRAM_STATEMENTS
 
@@ -15,7 +15,7 @@ Grammar
     5 PROGRAM_STATEMENTS: PROGRAM_STATEMENT PROGRAM_STATEMENTS
     6                   | PROGRAM_STATEMENT
 
-    7 DECLARATION_STATEMENT: INT VAR_LIST SC
+    7 DECLARATION_STATEMENT: TYPE VAR_LIST SC
 
     8 VAR_LIST: VAR COMA VAR_LIST
     9         | VAR
@@ -32,7 +32,7 @@ Terminals, with rules where they appear
     $end (0) 0
     error (256)
     HEADER (258) 1
-    INT (259) 1 7
+    TYPE (259) 1 7
     MAIN (260) 1
     LB (261) 1 12
     RB (262) 1 12
@@ -86,9 +86,9 @@ State 0
 
 State 1
 
-    1 prm: HEADER . INT MAIN LB RB LCB BODY RCB
+    1 prm: HEADER . TYPE MAIN LB RB LCB BODY RCB
 
-    INT  shift, and go to state 3
+    TYPE  shift, and go to state 3
 
 
 State 2
@@ -100,7 +100,7 @@ State 2
 
 State 3
 
-    1 prm: HEADER INT . MAIN LB RB LCB BODY RCB
+    1 prm: HEADER TYPE . MAIN LB RB LCB BODY RCB
 
     MAIN  shift, and go to state 5
 
@@ -114,30 +114,30 @@ State 4
 
 State 5
 
-    1 prm: HEADER INT MAIN . LB RB LCB BODY RCB
+    1 prm: HEADER TYPE MAIN . LB RB LCB BODY RCB
 
     LB  shift, and go to state 6
 
 
 State 6
 
-    1 prm: HEADER INT MAIN LB . RB LCB BODY RCB
+    1 prm: HEADER TYPE MAIN LB . RB LCB BODY RCB
 
     RB  shift, and go to state 7
 
 
 State 7
 
-    1 prm: HEADER INT MAIN LB RB . LCB BODY RCB
+    1 prm: HEADER TYPE MAIN LB RB . LCB BODY RCB
 
     LCB  shift, and go to state 8
 
 
 State 8
 
-    1 prm: HEADER INT MAIN LB RB LCB . BODY RCB
+    1 prm: HEADER TYPE MAIN LB RB LCB . BODY RCB
 
-    INT  shift, and go to state 9
+    TYPE  shift, and go to state 9
 
     BODY                    go to state 10
     DECLARATION_STATEMENTS  go to state 11
@@ -146,7 +146,7 @@ State 8
 
 State 9
 
-    7 DECLARATION_STATEMENT: INT . VAR_LIST SC
+    7 DECLARATION_STATEMENT: TYPE . VAR_LIST SC
 
     VAR  shift, and go to state 13
 
@@ -155,7 +155,7 @@ State 9
 
 State 10
 
-    1 prm: HEADER INT MAIN LB RB LCB BODY . RCB
+    1 prm: HEADER TYPE MAIN LB RB LCB BODY . RCB
 
     RCB  shift, and go to state 15
 
@@ -175,7 +175,7 @@ State 12
     3 DECLARATION_STATEMENTS: DECLARATION_STATEMENT . DECLARATION_STATEMENTS
     4                       | DECLARATION_STATEMENT .
 
-    INT  shift, and go to state 9
+    TYPE  shift, and go to state 9
 
     $default  reduce using rule 4 (DECLARATION_STATEMENTS)
 
@@ -195,14 +195,14 @@ State 13
 
 State 14
 
-    7 DECLARATION_STATEMENT: INT VAR_LIST . SC
+    7 DECLARATION_STATEMENT: TYPE VAR_LIST . SC
 
     SC  shift, and go to state 21
 
 
 State 15
 
-    1 prm: HEADER INT MAIN LB RB LCB BODY RCB .
+    1 prm: HEADER TYPE MAIN LB RB LCB BODY RCB .
 
     $default  reduce using rule 1 (prm)
 
@@ -252,7 +252,7 @@ State 20
 
 State 21
 
-    7 DECLARATION_STATEMENT: INT VAR_LIST SC .
+    7 DECLARATION_STATEMENT: TYPE VAR_LIST SC .
 
     $default  reduce using rule 7 (DECLARATION_STATEMENT)
 

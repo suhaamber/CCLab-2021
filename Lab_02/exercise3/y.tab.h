@@ -50,7 +50,7 @@ extern int yydebug;
   enum yytokentype
   {
     HEADER = 258,
-    INT = 259,
+    TYPE = 259,
     MAIN = 260,
     LB = 261,
     RB = 262,
@@ -65,7 +65,7 @@ extern int yydebug;
 #endif
 /* Tokens.  */
 #define HEADER 258
-#define INT 259
+#define TYPE 259
 #define MAIN 260
 #define LB 261
 #define RB 262
