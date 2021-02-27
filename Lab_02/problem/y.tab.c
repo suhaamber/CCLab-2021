@@ -77,24 +77,12 @@
 	int current_data_type;
 	int expn_type=-1;
 	int temp;
-	
-	struct symbol_table{char var_name[30]; int type;}var_list[20];
-	
-	// you may associate an integer with a datatype (say var_list[i].type=1 may imply that variable var_list[i].var_name is of type int) and store that integer against the variable whenever you deal with a declaration statement
-	
-	int var_count=-1;
-	
-	//number of entries in the symbol table
-	
-	extern int lookup_in_table(char var[30]);
-	
-	//returns the data type associated with the variable name being passed to, returns -1 if in case the variable is undeclared
-	
-	extern void insert_to_table(char var[30], int type);
-	
-	//adds a new variable along with its data type to the table and terminates with a "multiple declaration error message", if in case the variable is already being defined
+	struct symbol_table{char var_name[30]; int type;}var_list[20];// you may associate an integer with a datatype (say var_list[i].type=1 may imply that variable var_list[i].var_name is of type int) and store that integer against the variable whenever you deal with a declaration statement
+	int var_count=-1;//number of entries in the symbol table
+	extern int lookup_in_table(char var[30]);//returns the data type associated with the variable name being passed to, returns -1 if in case the variable is undeclared
+	extern void insert_to_table(char var[30], int type);//adds a new variable along with its data type to the table and terminates with a "multiple declaration error message", if in case the variable is already being defined
 
-#line 98 "y.tab.c"
+#line 86 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -150,7 +138,7 @@ extern int yydebug;
     RCB = 263,
     SC = 264,
     COMA = 265,
-    VARB = 266,
+    VAR = 266,
     EQ = 267,
     OP = 268,
     INT = 269,
@@ -168,7 +156,7 @@ extern int yydebug;
 #define RCB 263
 #define SC 264
 #define COMA 265
-#define VARB 266
+#define VAR 266
 #define EQ 267
 #define OP 268
 #define INT 269
@@ -180,12 +168,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 29 "problem.y"
+#line 17 "problem.y"
 
 int data_type;
 char var_name[30];
 
-#line 189 "y.tab.c"
+#line 177 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -562,8 +550,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    45,    45,    48,    49,    53,    54,    58,    59,    60,
-      63,    64,    65,    66,    67,    83,    84,    88,    92,    93
+       0,    33,    33,    36,    37,    41,    42,    46,    47,    48,
+      51,    54,    55,    56,    57,    73,    74,    78,    82,    83
 };
 #endif
 
@@ -573,10 +561,10 @@ static const yytype_int8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "HEADER", "MAIN", "LB", "RB", "LCB",
-  "RCB", "SC", "COMA", "VARB", "EQ", "OP", "INT", "CHAR", "FLOAT",
-  "DOUBLE", "$accept", "prm", "BODY", "DECLARATION_STATEMENTS",
-  "PROGRAM_STATEMENTS", "DECLARATION_STATEMENT", "VAR_LIST",
-  "PROGRAM_STATEMENT", "A_EXPN", "MAIN_TYPE", "DATA_TYPE", YY_NULLPTR
+  "RCB", "SC", "COMA", "VAR", "EQ", "OP", "INT", "CHAR", "FLOAT", "DOUBLE",
+  "$accept", "prm", "BODY", "DECLARATION_STATEMENTS", "PROGRAM_STATEMENTS",
+  "DECLARATION_STATEMENT", "VAR_LIST", "PROGRAM_STATEMENT", "A_EXPN",
+  "MAIN_TYPE", "DATA_TYPE", YY_NULLPTR
 };
 #endif
 
@@ -1371,52 +1359,60 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 45 "problem.y"
+#line 33 "problem.y"
                                                    {
 							printf("\n parsing successful\n");
 						   }
-#line 1379 "y.tab.c"
+#line 1367 "y.tab.c"
     break;
 
   case 4:
-#line 50 "problem.y"
+#line 38 "problem.y"
                                                   {
 							printf("\n Declaration section successfully parsed\n");
 						  }
-#line 1387 "y.tab.c"
+#line 1375 "y.tab.c"
     break;
 
   case 6:
-#line 55 "problem.y"
+#line 43 "problem.y"
                                                   {
 							printf("\n program statements successfully parsed\n");
 						  }
-#line 1395 "y.tab.c"
+#line 1383 "y.tab.c"
     break;
 
   case 8:
-#line 59 "problem.y"
+#line 47 "problem.y"
                                              {}
-#line 1401 "y.tab.c"
+#line 1389 "y.tab.c"
     break;
 
   case 9:
-#line 60 "problem.y"
-                              {
+#line 48 "problem.y"
+                             {
 				insert_to_table((yyvsp[-2].var_name),current_data_type);
 			     }
-#line 1409 "y.tab.c"
+#line 1397 "y.tab.c"
+    break;
+
+  case 10:
+#line 51 "problem.y"
+              {
+		insert_to_table((yyvsp[0].var_name),current_data_type);
+	      }
+#line 1405 "y.tab.c"
     break;
 
   case 11:
-#line 64 "problem.y"
-                                      {	expn_type=-1;	}
-#line 1415 "y.tab.c"
+#line 54 "problem.y"
+                                     {	expn_type=-1;	}
+#line 1411 "y.tab.c"
     break;
 
   case 14:
-#line 67 "problem.y"
-                       {
+#line 57 "problem.y"
+                      {
 			if((temp=lookup_in_table((yyvsp[0].var_name)))!=-1)
 			{
 				if(expn_type==-1)
@@ -1432,29 +1428,29 @@ yyreduce:
 				printf("\n variable \"%s\" undeclared\n",(yyvsp[0].var_name));exit(0);
 			}
 		     }
-#line 1436 "y.tab.c"
+#line 1432 "y.tab.c"
     break;
 
   case 16:
-#line 84 "problem.y"
+#line 74 "problem.y"
                 {
 			(yyval.data_type)=(yyvsp[0].data_type);
 			current_data_type=(yyvsp[0].data_type);
 		}
-#line 1445 "y.tab.c"
+#line 1441 "y.tab.c"
     break;
 
   case 17:
-#line 88 "problem.y"
+#line 78 "problem.y"
                 {
 			(yyval.data_type)=(yyvsp[0].data_type);
 			current_data_type=(yyvsp[0].data_type);
 		}
-#line 1454 "y.tab.c"
+#line 1450 "y.tab.c"
     break;
 
 
-#line 1458 "y.tab.c"
+#line 1454 "y.tab.c"
 
       default: break;
     }
@@ -1686,13 +1682,14 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 94 "problem.y"
+#line 84 "problem.y"
+
 
 
 int lookup_in_table(char var[30])//returns the data type associated with 
 {
-	int found_in_table = 0;
-	for(int i=0; i<=var_count; i++)
+	int found_in_table = 0, i;
+	for(i=0; i<=var_count; i++)
 	{
 		if(strcmp(var_list[i].var_name, var)==0)
 		{
@@ -1703,14 +1700,11 @@ int lookup_in_table(char var[30])//returns the data type associated with
 	//if var not found in the table
 	if(!found_in_table)
 	{
-		printf("variable %s undeclared.\n", var);
-		exit(0);
+		return -1;
 	}
 
 	//if var found
 	return var_list[i].type;
-
-	return -1;
 }
 void insert_to_table(char var[30], int newtype)
 {
@@ -1718,7 +1712,7 @@ void insert_to_table(char var[30], int newtype)
 	{
 		if(strcmp(var_list[i].var_name, var)==0)
 		{
-			printf("multiple declaration of %s", var);
+			printf("multiple declaration of %s\n", var);
 			exit(0);
 		}
 	}
@@ -1744,4 +1738,5 @@ int yyerror(const char *msg)
 	success = 0;
 	return 0;
 }
+
 

@@ -17,14 +17,14 @@ Grammar
 
     7 DECLARATION_STATEMENT: DATA_TYPE VAR_LIST SC
 
-    8 VAR_LIST: VARB COMA VAR_LIST
-    9         | VARB
+    8 VAR_LIST: VAR COMA VAR_LIST
+    9         | VAR
 
-   10 PROGRAM_STATEMENT: VARB EQ A_EXPN SC
+   10 PROGRAM_STATEMENT: VAR EQ A_EXPN SC
 
    11 A_EXPN: A_EXPN OP A_EXPN
    12       | LB A_EXPN RB
-   13       | VARB
+   13       | VAR
 
    14 MAIN_TYPE: INT
 
@@ -46,7 +46,7 @@ Terminals, with rules where they appear
     RCB (263) 1
     SC (264) 7 10
     COMA (265) 8
-    VARB <var_name> (266) 8 9 10 13
+    VAR <var_name> (266) 8 9 10 13
     EQ (267) 10
     OP (268) 11
     INT <data_type> (269) 14 15
@@ -212,7 +212,7 @@ State 15
 
     2 BODY: DECLARATION_STATEMENTS . PROGRAM_STATEMENTS
 
-    VARB  shift, and go to state 19
+    VAR  shift, and go to state 19
 
     PROGRAM_STATEMENTS  go to state 20
     PROGRAM_STATEMENT   go to state 21
@@ -239,7 +239,7 @@ State 17
 
     7 DECLARATION_STATEMENT: DATA_TYPE . VAR_LIST SC
 
-    VARB  shift, and go to state 23
+    VAR  shift, and go to state 23
 
     VAR_LIST  go to state 24
 
@@ -253,7 +253,7 @@ State 18
 
 State 19
 
-   10 PROGRAM_STATEMENT: VARB . EQ A_EXPN SC
+   10 PROGRAM_STATEMENT: VAR . EQ A_EXPN SC
 
     EQ  shift, and go to state 25
 
@@ -270,7 +270,7 @@ State 21
     5 PROGRAM_STATEMENTS: PROGRAM_STATEMENT . PROGRAM_STATEMENTS
     6                   | PROGRAM_STATEMENT .
 
-    VARB  shift, and go to state 19
+    VAR  shift, and go to state 19
 
     $default  reduce using rule 6 (PROGRAM_STATEMENTS)
 
@@ -287,8 +287,8 @@ State 22
 
 State 23
 
-    8 VAR_LIST: VARB . COMA VAR_LIST
-    9         | VARB .
+    8 VAR_LIST: VAR . COMA VAR_LIST
+    9         | VAR .
 
     COMA  shift, and go to state 27
 
@@ -304,10 +304,10 @@ State 24
 
 State 25
 
-   10 PROGRAM_STATEMENT: VARB EQ . A_EXPN SC
+   10 PROGRAM_STATEMENT: VAR EQ . A_EXPN SC
 
-    LB    shift, and go to state 29
-    VARB  shift, and go to state 30
+    LB   shift, and go to state 29
+    VAR  shift, and go to state 30
 
     A_EXPN  go to state 31
 
@@ -321,9 +321,9 @@ State 26
 
 State 27
 
-    8 VAR_LIST: VARB COMA . VAR_LIST
+    8 VAR_LIST: VAR COMA . VAR_LIST
 
-    VARB  shift, and go to state 23
+    VAR  shift, and go to state 23
 
     VAR_LIST  go to state 32
 
@@ -339,22 +339,22 @@ State 29
 
    12 A_EXPN: LB . A_EXPN RB
 
-    LB    shift, and go to state 29
-    VARB  shift, and go to state 30
+    LB   shift, and go to state 29
+    VAR  shift, and go to state 30
 
     A_EXPN  go to state 33
 
 
 State 30
 
-   13 A_EXPN: VARB .
+   13 A_EXPN: VAR .
 
     $default  reduce using rule 13 (A_EXPN)
 
 
 State 31
 
-   10 PROGRAM_STATEMENT: VARB EQ A_EXPN . SC
+   10 PROGRAM_STATEMENT: VAR EQ A_EXPN . SC
    11 A_EXPN: A_EXPN . OP A_EXPN
 
     SC  shift, and go to state 34
@@ -363,7 +363,7 @@ State 31
 
 State 32
 
-    8 VAR_LIST: VARB COMA VAR_LIST .
+    8 VAR_LIST: VAR COMA VAR_LIST .
 
     $default  reduce using rule 8 (VAR_LIST)
 
@@ -379,7 +379,7 @@ State 33
 
 State 34
 
-   10 PROGRAM_STATEMENT: VARB EQ A_EXPN SC .
+   10 PROGRAM_STATEMENT: VAR EQ A_EXPN SC .
 
     $default  reduce using rule 10 (PROGRAM_STATEMENT)
 
@@ -388,8 +388,8 @@ State 35
 
    11 A_EXPN: A_EXPN OP . A_EXPN
 
-    LB    shift, and go to state 29
-    VARB  shift, and go to state 30
+    LB   shift, and go to state 29
+    VAR  shift, and go to state 30
 
     A_EXPN  go to state 37
 

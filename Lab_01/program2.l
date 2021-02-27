@@ -1,20 +1,17 @@
-/*program to count number of words, lines and characters*/
-
+/*A program that counts the number of characters, words and lines in a file*/
 %{
-    #include<stdio.h>
-    int words = 0, lines = 0, chars = 0;
+#include<stdio.h>
+int chars = 0;
+int words = 0;
+int lines = 0;
 %}
-
 %%
-
-[a-zA-Z]+ {words++; chars+=strlen(yytext); }
-\n {lines++; chars++;}
-. {chars++;}
-
+[a-zA-Z]+ { words++; chars += strlen(yytext); }
+\n { chars++; lines++; }
+. { chars++; }
 %%
-
 main(int argc, char **argv)
 {
-    yylex(); 
-    printf("Words: %d\nLines: %d\nCharacters: %d\n", words, lines, chars);
+yylex();
+printf(" Number of lines=%d\n Number of words=%d\n Number of characters=%d\n",lines, words, chars);
 }

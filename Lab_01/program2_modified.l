@@ -5,13 +5,14 @@
     int words = 0, lines = 0, chars = 0;
 %}
 
-space " "
+space " "|\n
 letter [a-zA-Z]
 letters {space}{letter}{letter}{letter}{letter}{letter}{letter}{space}
 
 %%
 
-{letters} {words++; chars+=strlen(yytext); printf("%s\n", yytext); }
+{letters} {words++; chars+=strlen(yytext); }
+[a-zA-Z]+ {chars+=strlen(yytext);}
 \n {lines++; chars++;}
 . {chars++;}
 

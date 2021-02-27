@@ -57,7 +57,7 @@ extern int yydebug;
     RCB = 263,
     SC = 264,
     COMA = 265,
-    VARB = 266,
+    VAR = 266,
     EQ = 267,
     OP = 268,
     INT = 269,
@@ -75,7 +75,7 @@ extern int yydebug;
 #define RCB 263
 #define SC 264
 #define COMA 265
-#define VARB 266
+#define VAR 266
 #define EQ 267
 #define OP 268
 #define INT 269
@@ -87,7 +87,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 29 "problem.y"
+#line 17 "problem.y"
 
 int data_type;
 char var_name[30];

@@ -1,24 +1,19 @@
-/* detects tokens from an arithmetic expression */
-
+/*Program to print +, -, *, /, +, numbers, newline. Program also strips of whitespaces. Anything apart from this is printed as mystery character*/ 
 %{
-    #include<stdio.h>
+#include<stdio.h>
 %}
-
 %%
-
-"+" {printf("Plus\n");}
-"-" {printf("Minus\n");}
-"*" {printf("Multiplication\n");}
-"/" {printf("Division\n");}
-"|" {printf("Absolute\n");}
-[0-9]+ {printf("Number %s\n", yytext);}
-\n {printf("Newline\n");}
-[ \t] {printf("Blank\n");}
-. {printf("Mystery character %s\n", yytext); }
-
+"+" { printf("plus\n"); }
+"-" { printf("MINUS\n"); }
+"*" { printf("TIMES\n"); }
+"/" { printf("DIVIDE\n"); }
+"|" { printf("ABS\n"); }
+[0-9]+ { printf("NUMBER %s\n", yytext); }
+\n { printf("NEWLINE\n"); }
+[ \t] {printf("Blank"); }
+. { printf("Mystery character %s\n", yytext); }
 %%
-
 main(int argc, char **argv)
 {
-    yylex(); 
+        yylex();
 }

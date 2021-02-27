@@ -1,23 +1,33 @@
+/*Definition Section*/
+%{
+#include<stdio.h>
+%}
 
-%{ 
-    #include<stdio.h>
-    #include<stdlib.h>
-    int line_number = 1;  
-%} 
-  
-line .*\n     
-  
-%% 
 
-{line} { printf("%s", yytext); }  
-  
-%% 
-  
-int yywrap(){}  
-  
-int main(int argc, char*argv[]) 
-{  
-  
-    yylex();   
-    return 0; 
+/*Rule Section*/
+
+%%
+\/\/(.*) {/*Single line comment*/};					
+
+\/\*(.*\n)*.*\*\/  {/*Regular expression for multi line comment*/};			
+%%
+
+/*call the yywrap function*/
+int yywrap()
+{
+return 1;
+}
+
+
+
+/*Auxiliary function*/
+/*Driver function*/
+
+int main()
+{
+yyin=fopen("input.c","r");
+yyout=fopen("out.c","w");
+/*call the yylex function.*/
+yylex();
+return 0;
 }

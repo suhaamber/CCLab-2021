@@ -8,29 +8,17 @@
 	int current_data_type;
 	int expn_type=-1;
 	int temp;
-	
-	struct symbol_table{char var_name[30]; int type;}var_list[20];
-	
-	// you may associate an integer with a datatype (say var_list[i].type=1 may imply that variable var_list[i].var_name is of type int) and store that integer against the variable whenever you deal with a declaration statement
-	
-	int var_count=-1;
-	
-	//number of entries in the symbol table
-	
-	extern int lookup_in_table(char var[30]);
-	
-	//returns the data type associated with the variable name being passed to, returns -1 if in case the variable is undeclared
-	
-	extern void insert_to_table(char var[30], int type);
-	
-	//adds a new variable along with its data type to the table and terminates with a "multiple declaration error message", if in case the variable is already being defined
+	struct symbol_table{char var_name[30]; int type;}var_list[20];// you may associate an integer with a datatype (say var_list[i].type=1 may imply that variable var_list[i].var_name is of type int) and store that integer against the variable whenever you deal with a declaration statement
+	int var_count=-1;//number of entries in the symbol table
+	extern int lookup_in_table(char var[30]);//returns the data type associated with the variable name being passed to, returns -1 if in case the variable is undeclared
+	extern void insert_to_table(char var[30], int type);//adds a new variable along with its data type to the table and terminates with a "multiple declaration error message", if in case the variable is already being defined
 %}
 
 %union{
 int data_type;
 char var_name[30];
 }
-%token HEADER MAIN LB RB LCB RCB SC COMA VARB EQ OP 
+%token HEADER MAIN LB RB LCB RCB SC COMA VAR EQ OP 
 
 %token<data_type>INT
 %token<data_type>CHAR
@@ -38,7 +26,7 @@ char var_name[30];
 %token<data_type>DOUBLE
 
 %type<data_type>DATA_TYPE
-%type<var_name>VARB
+%type<var_name>VAR
 %start prm
 
 %%
@@ -57,14 +45,16 @@ PROGRAM_STATEMENTS : PROGRAM_STATEMENT PROGRAM_STATEMENTS
 						  }
 			| PROGRAM_STATEMENT
 DECLARATION_STATEMENT: DATA_TYPE VAR_LIST SC {}
-VAR_LIST : VARB COMA VAR_LIST {
+VAR_LIST : VAR COMA VAR_LIST {
 				insert_to_table($1,current_data_type);
 			     }
-		|  VARB
-PROGRAM_STATEMENT : VARB EQ A_EXPN SC {	expn_type=-1;	}
+	| VAR {
+		insert_to_table($1,current_data_type);
+	      }
+PROGRAM_STATEMENT : VAR EQ A_EXPN SC {	expn_type=-1;	}
 A_EXPN		: A_EXPN OP A_EXPN
 		| LB A_EXPN RB 
-		| VARB {
+		| VAR {
 			if((temp=lookup_in_table($1))!=-1)
 			{
 				if(expn_type==-1)
@@ -93,10 +83,11 @@ DATA_TYPE : INT {
 	| DOUBLE
 %%
 
+
 int lookup_in_table(char var[30])//returns the data type associated with 
 {
-	int found_in_table = 0;
-	for(int i=0; i<=var_count; i++)
+	int found_in_table = 0, i;
+	for(i=0; i<=var_count; i++)
 	{
 		if(strcmp(var_list[i].var_name, var)==0)
 		{
@@ -107,14 +98,11 @@ int lookup_in_table(char var[30])//returns the data type associated with
 	//if var not found in the table
 	if(!found_in_table)
 	{
-		printf("variable %s undeclared.\n", var);
-		exit(0);
+		return -1;
 	}
 
 	//if var found
 	return var_list[i].type;
-
-	return -1;
 }
 void insert_to_table(char var[30], int newtype)
 {
@@ -122,7 +110,7 @@ void insert_to_table(char var[30], int newtype)
 	{
 		if(strcmp(var_list[i].var_name, var)==0)
 		{
-			printf("multiple declaration of %s", var);
+			printf("multiple declaration of %s\n", var);
 			exit(0);
 		}
 	}
@@ -148,4 +136,5 @@ int yyerror(const char *msg)
 	success = 0;
 	return 0;
 }
+
 
