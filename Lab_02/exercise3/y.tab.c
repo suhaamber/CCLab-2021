@@ -66,7 +66,7 @@
 
 
 /* First part of user prologue.  */
-#line 1 "project_modified.y"
+#line 1 "project.y"
 
 	#include<stdio.h>
 	int yylex(void);
@@ -122,7 +122,7 @@ extern int yydebug;
   enum yytokentype
   {
     HEADER = 258,
-    TYPE = 259,
+    INT = 259,
     MAIN = 260,
     LB = 261,
     RB = 262,
@@ -137,7 +137,7 @@ extern int yydebug;
 #endif
 /* Tokens.  */
 #define HEADER 258
-#define TYPE 259
+#define INT 259
 #define MAIN 260
 #define LB 261
 #define RB 262
@@ -534,7 +534,7 @@ static const yytype_int8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "HEADER", "TYPE", "MAIN", "LB", "RB",
+  "$end", "error", "$undefined", "HEADER", "INT", "MAIN", "LB", "RB",
   "LCB", "RCB", "SC", "COMA", "VAR", "EQ", "OP", "$accept", "prm", "BODY",
   "DECLARATION_STATEMENTS", "PROGRAM_STATEMENTS", "DECLARATION_STATEMENT",
   "VAR_LIST", "PROGRAM_STATEMENT", "A_EXPN", YY_NULLPTR
@@ -1330,31 +1330,31 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 12 "project_modified.y"
-                                              {printf("\n parsing successful\n");}
+#line 12 "project.y"
+                                             {printf("\n parsing successful\n");}
 #line 1336 "y.tab.c"
     break;
 
   case 4:
-#line 14 "project_modified.y"
+#line 14 "project.y"
                                                                       {printf("\n Declaration section successfully parsed\n");}
 #line 1342 "y.tab.c"
     break;
 
   case 6:
-#line 16 "project_modified.y"
+#line 16 "project.y"
                                                           {printf("\n program statements successfully parsed\n");}
 #line 1348 "y.tab.c"
     break;
 
   case 9:
-#line 19 "project_modified.y"
+#line 19 "project.y"
                              {printf("\n variable list successfully parsed\n");}
 #line 1354 "y.tab.c"
     break;
 
   case 10:
-#line 20 "project_modified.y"
+#line 20 "project.y"
               {}
 #line 1360 "y.tab.c"
     break;
@@ -1592,7 +1592,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 25 "project_modified.y"
+#line 25 "project.y"
 
 
 int main()
