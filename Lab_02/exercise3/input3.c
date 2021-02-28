@@ -1,8 +1,9 @@
 #include<stdio.h>
 int main()
 {
-	int varone,vartwo,varthree;
-	int testone, testtwo;
+	int vartwo,varthree;
+	float testone9A, testtwo, form, for;
 	testone=(vartwo+varthree/(varone*vartwo));
-	testtwo=testone*varone+vartwo
+	testtwo=testone*varone+vartwo;
+	
 }
