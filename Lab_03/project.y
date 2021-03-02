@@ -18,10 +18,16 @@
 int data_type;
 char var_name[30];
 }
-%token HEADER MAIN LB RB LCB RCB SC COMA VAR EQ PLUS MINUS MUL DIV EXP UPLUS UMINUS
-
+%token HEADER MAIN LB RB LCB RCB SC COMA VAR EQ PLUS MINUS MUL DIV MOD EXP UPLUS UMINUS IF ELSE
+%token EQCOMPARE NEQCOMPARE GTE LTE GT LT NOT AND OR 
+%left UPLUS UMINUS
+%right EXP
 %left PLUS MINUS
-%left MUL DIV
+%left MUL DIV MOD
+%left OR AND 
+%left EQCOMPARE NEQCOMPARE
+%left GTE LTE GT LT
+%right NOT
 
 %token<data_type>INT
 %token<data_type>CHAR
@@ -36,7 +42,10 @@ char var_name[30];
 prm	: HEADER MAIN_TYPE MAIN LB RB LCB BODY RCB {
 							printf("\n parsing successful\n");
 						   }
-BODY	: DECLARATION_STATEMENTS PROGRAM_STATEMENTS
+BODY	: DECLARATION_STATEMENTS BODY
+		| PROGRAM_STATEMENTS BODY
+		| PROGRAM_STATEMENTS
+		| DECLARATION_STATEMENTS
 DECLARATION_STATEMENTS : DECLARATION_STATEMENT DECLARATION_STATEMENTS 
 						  {
 							printf("\n Declaration section successfully parsed\n");
@@ -59,8 +68,14 @@ DATA_TYPE : INT {
 			$$=$1;
 			current_data_type=$1;
 		}
-	| FLOAT {}
-	| DOUBLE {}
+	| FLOAT {
+			$$=$1;
+			current_data_type=$1;
+		}
+	| DOUBLE {
+			$$=$1;
+			current_data_type=$1;
+		}
 
 
 PROGRAM_STATEMENTS : PROGRAM_STATEMENT PROGRAM_STATEMENTS 
@@ -86,10 +101,29 @@ PROGRAM_STATEMENT : VAR EQ A_EXPN SC {
 					}
 					expn_type=-1;	
 				     }
-A_EXPN		:A_EXPN PLUS A_EXPN
+					| IF LB LOGICAL_EXPN RB LCB BODY RCB ELSE LCB BODY RCB
+					| IF LB LOGICAL_EXPN RB LCB BODY RCB
+LOGICAL_EXPN: LOGICAL_EXPN OR LOGICAL_EXPN
+			| LOGICAL_EXPN AND LOGICAL_EXPN
+			| LOGICAL_EXPN EQCOMPARE LOGICAL_EXPN
+			| LOGICAL_EXPN NEQCOMPARE LOGICAL_EXPN
+			| LOGICAL_EXPN GTE LOGICAL_EXPN
+			| LOGICAL_EXPN LTE LOGICAL_EXPN
+			| LOGICAL_EXPN GT LOGICAL_EXPN
+			| LOGICAL_EXPN LT LOGICAL_EXPN
+			| LOGICAL_EXPN NOT LOGICAL_EXPN
+			| LB LOGICAL_EXPN RB
+			| VAR {
+				if(lookup_in_table($1)==-1)
+				{
+					printf("\n variable \"%s\" undeclared\n",$1);exit(0);
+				}
+			}
+A_EXPN		: A_EXPN PLUS A_EXPN
 		|A_EXPN MINUS A_EXPN
 		|A_EXPN MUL A_EXPN
 		|A_EXPN DIV A_EXPN
+		|A_EXPN MOD A_EXPN 
 		| LB A_EXPN RB 
 		| VAR {
 			if((temp=lookup_in_table($1))!=-1)
@@ -107,15 +141,44 @@ A_EXPN		:A_EXPN PLUS A_EXPN
 				printf("\n variable \"%s\" undeclared\n",$1);exit(0);
 			}
 		     }
+		
 
 %%
 
-int lookup_in_table(char var[30])
+int lookup_in_table(char var[30])//returns the data type associated with 
 {
-	return -1;
+	int found_in_table = 0, i;
+	for(i=0; i<=var_count; i++)
+	{
+		if(strcmp(var_list[i].var_name, var)==0)
+		{
+			found_in_table = 1;
+			break;
+		}
+	}
+	//if var not found in the table
+	if(!found_in_table)
+	{
+		return -1;
+	}
+
+	//if var found
+	return var_list[i].type;
 }
-void insert_to_table(char var[30], int type)
+void insert_to_table(char var[30], int newtype)
 {
+	for(int i=0; i<=var_count; i++)
+	{
+		if(strcmp(var_list[i].var_name, var)==0)
+		{
+			printf("multiple declaration of %s\n", var);
+			exit(0);
+		}
+	}
+
+	var_count++;
+	strcpy(var_list[var_count].var_name, var);
+	var_list[var_count].type = newtype;
 }
 int main()
 {

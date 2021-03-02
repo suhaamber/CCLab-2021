@@ -11,9 +11,10 @@
 
 %%
 "#include<stdio.h>" {return HEADER;}
-"if"	{printf("usage of keyword \"%s\" is prohibited\n",yytext);exit(0);}
 "int"	{yylval.data_type=0;return INT;}
 "char" {yylval.data_type=1; return CHAR;}
+"double" {yylval.data_type=2; return CHAR;}
+"float" {yylval.data_type=3; return CHAR;}
 "main" {return MAIN;}
 "("	{return LB;}
 ")"	{return RB;}
@@ -21,13 +22,28 @@
 "}"	{return RCB;}
 ","	{return COMA;}
 ";"	{return SC;}
+"++" {return UPLUS;}
+"--" {return UMINUS;}
+"^" {return EXP;}
 [+] {return PLUS;}
 [-] {return MINUS;}
+"%" {return MOD;}
 [*] {return MUL;}
 [/] {return DIV;}
+"==" {return EQCOMPARE;}
+"!=" {return NEQCOMPARE;}
 "="	{return EQ;}
+">=" {return GTE;}
+"<=" {return LTE;}
+">" {return GT;}
+"<" {return LT;}
+"!" {return NOT;}
+"&&" {return AND;}
+"||" {return OR;}
+"if"/"(" {return IF;}
+"else" {return ELSE;}
 [a-z]+  {strcpy(yylval.var_name,yytext);return VAR;}
-[\n\t ]+  {/*new line or space*/}
+[\n\t" "]+  {/*new line or space*/}
 . {printf("invalid character sequence %s\n",yytext); exit(0);}
 %%
 
