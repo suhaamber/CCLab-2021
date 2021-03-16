@@ -23,6 +23,8 @@
 ")"	{return RB;}
 "{"	{return LCB;}
 "}"	{return RCB;}
+"[" {return LSB;}
+"]" {return RSB;}
 ","	{return COMA;}
 ";"	{return SC;}
 "++" {return UPLUS;}
@@ -51,8 +53,8 @@
 "while" {return WHILE;}
 "do" {return DO; }
 [a-z]+  {strcpy(yylval.var_name,yytext);return VAR;}
-[1-9][0-9]* {return NUMINT; }
-[0] {return NUMINT; }
+[1-9][0-9]* {yylval.num_int = (int)yytext; return NUMINT; }
+[0]  		{yylval.num_int = (int)yytext; return NUMINT; }
 [\n\t" "]+  {/*new line or space*/}
 . {printf("invalid character sequence %s\n",yytext); exit(0);}
 %%

@@ -54,43 +54,45 @@ extern int yydebug;
     RB = 260,
     LCB = 261,
     RCB = 262,
-    SC = 263,
-    COMA = 264,
-    VAR = 265,
-    EQ = 266,
-    PLUS = 267,
-    MINUS = 268,
-    MUL = 269,
-    DIV = 270,
-    MOD = 271,
-    EXP = 272,
-    UPLUS = 273,
-    UMINUS = 274,
-    IF = 275,
-    ELSE = 276,
-    EQCOMPARE = 277,
-    NEQCOMPARE = 278,
-    GTE = 279,
-    LTE = 280,
-    GT = 281,
-    LT = 282,
-    NOT = 283,
-    AND = 284,
-    OR = 285,
-    QUESM = 286,
-    COLON = 287,
-    FOR = 288,
-    WHILE = 289,
-    DO = 290,
-    NUMINT = 291,
-    INCLUDE = 292,
-    HASH = 293,
-    DOTH = 294,
-    DOUBLEQ = 295,
-    INT = 296,
-    CHAR = 297,
-    FLOAT = 298,
-    DOUBLE = 299
+    LSB = 263,
+    RSB = 264,
+    SC = 265,
+    COMA = 266,
+    VAR = 267,
+    EQ = 268,
+    PLUS = 269,
+    MINUS = 270,
+    MUL = 271,
+    DIV = 272,
+    MOD = 273,
+    EXP = 274,
+    UPLUS = 275,
+    UMINUS = 276,
+    IF = 277,
+    ELSE = 278,
+    EQCOMPARE = 279,
+    NEQCOMPARE = 280,
+    GTE = 281,
+    LTE = 282,
+    GT = 283,
+    LT = 284,
+    NOT = 285,
+    AND = 286,
+    OR = 287,
+    QUESM = 288,
+    COLON = 289,
+    FOR = 290,
+    WHILE = 291,
+    DO = 292,
+    NUMINT = 293,
+    INCLUDE = 294,
+    HASH = 295,
+    DOTH = 296,
+    DOUBLEQ = 297,
+    INT = 298,
+    CHAR = 299,
+    FLOAT = 300,
+    DOUBLE = 301
   };
 #endif
 /* Tokens.  */
@@ -99,54 +101,57 @@ extern int yydebug;
 #define RB 260
 #define LCB 261
 #define RCB 262
-#define SC 263
-#define COMA 264
-#define VAR 265
-#define EQ 266
-#define PLUS 267
-#define MINUS 268
-#define MUL 269
-#define DIV 270
-#define MOD 271
-#define EXP 272
-#define UPLUS 273
-#define UMINUS 274
-#define IF 275
-#define ELSE 276
-#define EQCOMPARE 277
-#define NEQCOMPARE 278
-#define GTE 279
-#define LTE 280
-#define GT 281
-#define LT 282
-#define NOT 283
-#define AND 284
-#define OR 285
-#define QUESM 286
-#define COLON 287
-#define FOR 288
-#define WHILE 289
-#define DO 290
-#define NUMINT 291
-#define INCLUDE 292
-#define HASH 293
-#define DOTH 294
-#define DOUBLEQ 295
-#define INT 296
-#define CHAR 297
-#define FLOAT 298
-#define DOUBLE 299
+#define LSB 263
+#define RSB 264
+#define SC 265
+#define COMA 266
+#define VAR 267
+#define EQ 268
+#define PLUS 269
+#define MINUS 270
+#define MUL 271
+#define DIV 272
+#define MOD 273
+#define EXP 274
+#define UPLUS 275
+#define UMINUS 276
+#define IF 277
+#define ELSE 278
+#define EQCOMPARE 279
+#define NEQCOMPARE 280
+#define GTE 281
+#define LTE 282
+#define GT 283
+#define LT 284
+#define NOT 285
+#define AND 286
+#define OR 287
+#define QUESM 288
+#define COLON 289
+#define FOR 290
+#define WHILE 291
+#define DO 292
+#define NUMINT 293
+#define INCLUDE 294
+#define HASH 295
+#define DOTH 296
+#define DOUBLEQ 297
+#define INT 298
+#define CHAR 299
+#define FLOAT 300
+#define DOUBLE 301
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "project.y"
+#line 20 "project.y"
 
 int data_type;
 char var_name[30];
+int num_int; 
 
-#line 150 "y.tab.h"
+#line 155 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

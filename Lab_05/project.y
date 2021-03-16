@@ -9,17 +9,20 @@
 	int expn_type=-1;
 	int temp;
 	int check_mod = 0;
-	struct symbol_table{char var_name[30]; int type;}var_list[20];
+	struct symbol_table{char var_name[30]; int type, is_array; int dimension_sequence[5]; }var_list[20];
 	int var_count=-1;
 	extern int lookup_in_table(char var[30]);
-	extern void insert_to_table(char var[30], int type);
+	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5]);
+	int empty_array[5] = {0,0,0,0,0};
+	int dimension_count=1; 
 %}
 
 %union{
 int data_type;
 char var_name[30];
+int num_int; 
 }
-%token MAIN LB RB LCB RCB SC COMA VAR EQ PLUS MINUS MUL DIV MOD EXP UPLUS UMINUS IF ELSE
+%token MAIN LB RB LCB RCB LSB RSB SC COMA VAR EQ PLUS MINUS MUL DIV MOD EXP UPLUS UMINUS IF ELSE
 %token EQCOMPARE NEQCOMPARE GTE LTE GT LT NOT AND OR QUESM COLON FOR WHILE DO NUMINT INCLUDE
 %token HASH DOTH DOUBLEQ 
 
@@ -39,6 +42,8 @@ char var_name[30];
 
 %type<data_type>DATA_TYPE
 %type<var_name>VAR
+%type<num_int>NUMINT
+
 %start prm
 
 %%
@@ -55,9 +60,8 @@ HEADERS : HEADER HEADERS
 HEADER	: HASH INCLUDE LT VAR DOTH GT
 		| HASH INCLUDE LT DOUBLEQ DIV PATH VAR DOTH DOUBLEQ GT
 
-PATH	: VAR PATH
-		| DIV PATH
-		| DIV
+PATH	: VAR DIV PATH
+		| VAR DIV
 
 BODY	: DECLARATION_STATEMENTS BODY
 		| PROGRAM_STATEMENTS BODY
@@ -72,12 +76,37 @@ DECLARATION_STATEMENTS : DECLARATION_STATEMENT DECLARATION_STATEMENTS
 
 DECLARATION_STATEMENT	: DATA_TYPE VAR_LIST SC {}
 
-VAR_LIST : VAR COMA VAR_LIST {
-				insert_to_table($1,current_data_type);
+VAR_LIST : VAR DIMENSION_SEQUENCE COMA VAR_LIST 
+	{
+		insert_to_table($1, current_data_type, dimension_count, empty_array); 
+		dimension_count = 1; 
+		for(int i=0; i<5; i++) 
+		{
+			empty_array[i] = 0; 
+		}
+	}
+	|  VAR COMA VAR_LIST {
+				insert_to_table($1,current_data_type, 0, empty_array);
 			     }
+	| VAR DIMENSION_SEQUENCE 
+	{
+		insert_to_table($1, current_data_type, dimension_count, empty_array); 
+		dimension_count = 1; 
+		for(int i=0; i<5; i++) 
+		{
+			empty_array[i] = 0; 
+		}
+	}
 	| VAR {
-		insert_to_table($1,current_data_type);
+		insert_to_table($1,current_data_type, 0, empty_array);
 	      }
+
+DIMENSION_SEQUENCE	: LSB NUMINT RSB DIMENSION_SEQUENCE
+					{
+						empty_array[dimension_count-1] = $2; 
+						dimension_count++;
+					}
+					| LSB NUMINT RSB
 
 MAIN_TYPE : INT
 DATA_TYPE : INT {
@@ -170,27 +199,29 @@ A_EXPN		: A_EXPN PLUS A_EXPN
 		|LB A_EXPN RB 
         |NUMINT
 		|VAR {
-			if((temp=lookup_in_table($1))!=-1)
-			{
-				if(expn_type==-1)
+				if((temp=lookup_in_table($1))!=-1)
 				{
-					expn_type=temp;
+					if(expn_type==-1)
+					{
+						expn_type=temp;
+					}
+					
+					else if(expn_type!=temp)
+					{
+						printf("\ntype mismatch in the expression\n");
+						exit(0);
+					}
 				}
-				
-				else if(expn_type!=temp)
+				else
 				{
-					printf("\ntype mismatch in the expression\n");
-					exit(0);
+					printf("\n variable \"%s\" undeclared\n",$1);exit(0);
 				}
-			}else
-			{
-				printf("\n variable \"%s\" undeclared\n",$1);exit(0);
-			}
-		     }
+		    }
 %%
 
 int lookup_in_table(char var[30])//returns the data type associated with 
 {
+	//check for indexes
 	int found_in_table = 0, i;
 	for(i=0; i<=var_count; i++)
 	{
@@ -209,7 +240,7 @@ int lookup_in_table(char var[30])//returns the data type associated with
 	//if var found
 	return var_list[i].type;
 }
-void insert_to_table(char var[30], int newtype)
+void insert_to_table(char var[30], int newtype, int new_is_array, int new_dim_seq[5])
 {
 	for(int i=0; i<=var_count; i++)
 	{
@@ -223,6 +254,11 @@ void insert_to_table(char var[30], int newtype)
 	var_count++;
 	strcpy(var_list[var_count].var_name, var);
 	var_list[var_count].type = newtype;
+	var_list[var_count].is_array = new_is_array; 
+	for(int i=0; i<5; i++)
+	{
+		var_list[var_count].dimension_sequence[i] = new_dim_seq[i]; 
+	}
 }
 int main()
 {
