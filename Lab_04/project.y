@@ -125,8 +125,8 @@ PROGRAM_STATEMENT : VAR EQ A_EXPN SC {
                     | FOR LB A_EXPN SC LOGICAL_EXPN SC A_EXPN RB LCB BODY RCB
                     | WHILE LB LOGICAL_EXPN RB LCB BODY RCB
                     | DO LCB BODY RCB WHILE LB LOGICAL_EXPN RB SC
-                    | VAR UPLUS SC
-                    | VAR UMINUS SC
+                    | A_EXPN UPLUS SC
+                    | A_EXPN UMINUS SC
 
 LOGICAL_EXPN: LOGICAL_EXPN OR LOGICAL_EXPN
 			| LOGICAL_EXPN AND LOGICAL_EXPN
