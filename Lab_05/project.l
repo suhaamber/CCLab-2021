@@ -10,12 +10,15 @@
 %}
 
 %%
-"#include<stdio.h>" {return HEADER;}
+"include" {return INCLUDE; }
 "int"	{yylval.data_type=0;return INT;}
 "char" {yylval.data_type=1; return CHAR;}
 "double" {yylval.data_type=2; return CHAR;}
 "float" {yylval.data_type=3; return CHAR;}
 "main" {return MAIN;}
+".h" {return DOTH; }
+"#" {return HASH; }
+"\"" {return DOUBLEQ; }
 "("	{return LB;}
 ")"	{return RB;}
 "{"	{return LCB;}
