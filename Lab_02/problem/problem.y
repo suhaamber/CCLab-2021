@@ -83,7 +83,6 @@ DATA_TYPE : INT {
 	| DOUBLE
 %%
 
-
 int lookup_in_table(char var[30])//returns the data type associated with 
 {
 	int found_in_table = 0, i;
@@ -136,5 +135,4 @@ int yyerror(const char *msg)
 	success = 0;
 	return 0;
 }
-
 
