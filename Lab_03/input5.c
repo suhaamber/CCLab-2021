@@ -7,5 +7,4 @@ int main()
 	testone=testtwo+testthree/(testone*testtwo);
 	vartwo=varone*varfour;
 	varone=vartwo%varthree;
-
 }

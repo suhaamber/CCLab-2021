@@ -8,6 +8,7 @@
 	int current_data_type;
 	int expn_type=-1;
 	int temp;
+	int check_mod = 0;
 	struct symbol_table{char var_name[30]; int type;}var_list[20];
 	int var_count=-1;
 	extern int lookup_in_table(char var[30]);
@@ -20,6 +21,7 @@ char var_name[30];
 }
 %token HEADER MAIN LB RB LCB RCB SC COMA VAR EQ PLUS MINUS MUL DIV MOD EXP UPLUS UMINUS IF ELSE
 %token EQCOMPARE NEQCOMPARE GTE LTE GT LT NOT AND OR 
+
 %left UPLUS UMINUS
 %right EXP
 %left PLUS MINUS
@@ -42,16 +44,20 @@ char var_name[30];
 prm	: HEADER MAIN_TYPE MAIN LB RB LCB BODY RCB {
 							printf("\n parsing successful\n");
 						   }
+
 BODY	: DECLARATION_STATEMENTS BODY
 		| PROGRAM_STATEMENTS BODY
 		| PROGRAM_STATEMENTS
 		| DECLARATION_STATEMENTS
+
 DECLARATION_STATEMENTS : DECLARATION_STATEMENT DECLARATION_STATEMENTS 
 						  {
 							printf("\n Declaration section successfully parsed\n");
 						  }
-			| DECLARATION_STATEMENT
+	| DECLARATION_STATEMENT
+
 DECLARATION_STATEMENT: DATA_TYPE VAR_LIST SC {}
+
 VAR_LIST : VAR COMA VAR_LIST {
 				insert_to_table($1,current_data_type);
 			     }
@@ -87,10 +93,21 @@ PROGRAM_STATEMENTS : PROGRAM_STATEMENT PROGRAM_STATEMENTS
 PROGRAM_STATEMENT : VAR EQ A_EXPN SC {	
 					if((temp=lookup_in_table($1))!=-1)
 					{
+						if(check_mod==1)
+						{
+							if(expn_type!=0 && temp!=0)
+							{
+								printf("Both types not int.\n");
+								exit(0); 
+							}
+							check_mod=0;
+						}
 						if(expn_type==-1)
 						{
 							expn_type=temp;
-						}else if(expn_type!=temp)
+						}
+						
+						else if(expn_type!=temp)
 						{
 							printf("\ntype mismatch in the expression\n");
 							exit(0);
@@ -103,6 +120,7 @@ PROGRAM_STATEMENT : VAR EQ A_EXPN SC {
 				     }
 					| IF LB LOGICAL_EXPN RB LCB BODY RCB ELSE LCB BODY RCB
 					| IF LB LOGICAL_EXPN RB LCB BODY RCB
+
 LOGICAL_EXPN: LOGICAL_EXPN OR LOGICAL_EXPN
 			| LOGICAL_EXPN AND LOGICAL_EXPN
 			| LOGICAL_EXPN EQCOMPARE LOGICAL_EXPN
@@ -123,7 +141,10 @@ A_EXPN		: A_EXPN PLUS A_EXPN
 		|A_EXPN MINUS A_EXPN
 		|A_EXPN MUL A_EXPN
 		|A_EXPN DIV A_EXPN
-		|A_EXPN MOD A_EXPN 
+		|A_EXPN MOD A_EXPN	{ check_mod = 1; }
+		|A_EXPN EXP A_EXPN
+		|A_EXPN UMINUS
+		|A_EXPN UPLUS 
 		| LB A_EXPN RB 
 		| VAR {
 			if((temp=lookup_in_table($1))!=-1)
@@ -131,7 +152,9 @@ A_EXPN		: A_EXPN PLUS A_EXPN
 				if(expn_type==-1)
 				{
 					expn_type=temp;
-				}else if(expn_type!=temp)
+				}
+				
+				else if(expn_type!=temp)
 				{
 					printf("\ntype mismatch in the expression\n");
 					exit(0);
@@ -141,8 +164,6 @@ A_EXPN		: A_EXPN PLUS A_EXPN
 				printf("\n variable \"%s\" undeclared\n",$1);exit(0);
 			}
 		     }
-		
-
 %%
 
 int lookup_in_table(char var[30])//returns the data type associated with 
