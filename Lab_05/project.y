@@ -11,10 +11,10 @@
 	int check_mod = 0;
 	struct symbol_table{char var_name[30]; int type, is_array; int dimension_sequence[5]; }var_list[20];
 	int var_count=-1;
-	extern int lookup_in_table(char var[30]);
+	extern int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5]);
 	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5]);
 	int empty_array[5] = {0,0,0,0,0};
-	int dimension_count=1; 
+	int dimension_count=0; 
 %}
 
 %union{
@@ -79,34 +79,40 @@ DECLARATION_STATEMENT	: DATA_TYPE VAR_LIST SC {}
 VAR_LIST : VAR DIMENSION_SEQUENCE COMA VAR_LIST 
 	{
 		insert_to_table($1, current_data_type, dimension_count, empty_array); 
-		dimension_count = 1; 
+		dimension_count = 0; 
 		for(int i=0; i<5; i++) 
 		{
 			empty_array[i] = 0; 
 		}
 	}
-	|  VAR COMA VAR_LIST {
-				insert_to_table($1,current_data_type, 0, empty_array);
-			     }
+	|  VAR COMA VAR_LIST 
+	{
+		insert_to_table($1,current_data_type, 0, empty_array);
+	}
 	| VAR DIMENSION_SEQUENCE 
 	{
 		insert_to_table($1, current_data_type, dimension_count, empty_array); 
-		dimension_count = 1; 
+		dimension_count = 0; 
 		for(int i=0; i<5; i++) 
 		{
 			empty_array[i] = 0; 
 		}
 	}
-	| VAR {
+	| VAR 
+	{
 		insert_to_table($1,current_data_type, 0, empty_array);
-	      }
+	}
 
 DIMENSION_SEQUENCE	: LSB NUMINT RSB DIMENSION_SEQUENCE
 					{
-						empty_array[dimension_count-1] = $2; 
+						empty_array[dimension_count] = $2; 
 						dimension_count++;
 					}
 					| LSB NUMINT RSB
+					{
+						empty_array[dimension_count] = $2; 
+						dimension_count++; 
+					}
 
 MAIN_TYPE : INT
 DATA_TYPE : INT {
@@ -133,45 +139,107 @@ PROGRAM_STATEMENTS : PROGRAM_STATEMENT PROGRAM_STATEMENTS
 						  }
 			| PROGRAM_STATEMENT
 
-PROGRAM_STATEMENT : VAR EQ A_EXPN SC {	
-					if((temp=lookup_in_table($1))!=-1)
+PROGRAM_STATEMENT : VAR COMPLEX_VAR EQ A_EXPN SC
 					{
-						if(check_mod==1)
+						if((temp=lookup_in_table($1, dimension_count, empty_array))!=-1)
 						{
-							if(expn_type!=0 && temp!=0)
+							if(check_mod==1)
 							{
-								printf("Both types not int.\n");
-								exit(0); 
+								if(expn_type!=0 && temp!=0)
+								{
+									printf("Both types not int.\n");
+									exit(0); 
+								}
+								check_mod=0;
 							}
-							check_mod=0;
+							if(expn_type==-1)
+							{
+								expn_type=temp;
+							}
+							
+							else if(expn_type!=temp)
+							{
+								extern int yylineno;
+								printf("\nType mismatch in the expression. Line number %d\n", yylineno);
+								exit(0);
+							}
 						}
-						if(expn_type==-1)
+						else
 						{
-							expn_type=temp;
+							printf("\n variable \"%s\" undeclared\n",$1);exit(0);
 						}
-						
-						else if(expn_type!=temp)
+						expn_type=-1;	
+						dimension_count = 1; 
+						for(int i=0; i<5; i++) 
 						{
-							printf("\ntype mismatch in the expression\n");
-							exit(0);
+							empty_array[i] = 0; 
 						}
-					}else
-					{
-						printf("\n variable \"%s\" undeclared\n",$1);exit(0);
 					}
-					expn_type=-1;	
-				     }
+					VAR EQ A_EXPN SC 
+					{	
+						if((temp=lookup_in_table($1, 0, empty_array))!=-1)
+						{
+							if(check_mod==1)
+							{
+								if(expn_type!=0 && temp!=0)
+								{
+									printf("Both types not int.\n");
+									exit(0); 
+								}
+								check_mod=0;
+							}
+							if(expn_type==-1)
+							{
+								expn_type=temp;
+							}
+							
+							else if(expn_type!=temp)
+							{
+								extern int yylineno;
+								printf("\nType mismatch in the expression. Line number %d\n", yylineno);
+								exit(0);
+							}
+						}
+						else
+						{
+							printf("\n variable \"%s\" undeclared\n",$1);exit(0);
+						}
+						expn_type=-1;	
+				    }
 					| IF LB LOGICAL_EXPN RB LCB BODY RCB ELSE LCB BODY RCB
 					| IF LB LOGICAL_EXPN RB LCB BODY RCB
                     | LB LOGICAL_EXPN RB QUESM LCB BODY RCB COLON LCB BODY RCB
-                    | FOR LB PROGRAM_STATEMENT LOGICAL_EXPN SC A_EXPN RB LCB BODY RCB
-                    | FOR LB A_EXPN SC LOGICAL_EXPN SC A_EXPN RB LCB BODY RCB
+                    | FOR LB FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN RB LCB BODY RCB
                     | WHILE LB LOGICAL_EXPN RB LCB BODY RCB
                     | DO LCB BODY RCB WHILE LB LOGICAL_EXPN RB SC
-                    | A_EXPN UPLUS SC
-                    | A_EXPN UMINUS SC
+					
+FOR_EXPN : VAR EQ A_EXPN
+		| VAR COMPLEX_VAR EQ A_EXPN
+		| VAR UPLUS
+		| VAR UMINUS
 
-LOGICAL_EXPN: LOGICAL_EXPN OR LOGICAL_EXPN
+COMPLEX_VAR : LSB VAR RSB COMPLEX_VAR
+			{
+				empty_array[dimension_count] = 0; 
+				dimension_count++;
+			}
+			| LSB NUMINT RSB COMPLEX_VAR
+			{
+				empty_array[dimension_count] = $2; 
+				dimension_count++;
+			}
+			| LSB VAR RSB
+			{
+				empty_array[dimension_count] = 0; 
+				dimension_count++;
+			}
+			| LSB NUMINT RSB
+			{
+				empty_array[dimension_count] = $2; 
+				dimension_count++;
+			}
+
+LOGICAL_EXPN : LOGICAL_EXPN OR LOGICAL_EXPN
 			| LOGICAL_EXPN AND LOGICAL_EXPN
 			| LOGICAL_EXPN EQCOMPARE LOGICAL_EXPN
 			| LOGICAL_EXPN NEQCOMPARE LOGICAL_EXPN
@@ -183,23 +251,24 @@ LOGICAL_EXPN: LOGICAL_EXPN OR LOGICAL_EXPN
 			| LB LOGICAL_EXPN RB
             | NUMINT
 			| VAR {
-				if(lookup_in_table($1)==-1)
+				if(lookup_in_table($1, 0, empty_array)==-1)
 				{
 					printf("\n variable \"%s\" undeclared\n",$1);exit(0);
 				}
 			}
 A_EXPN		: A_EXPN PLUS A_EXPN
-		|A_EXPN MINUS A_EXPN
-		|A_EXPN MUL A_EXPN
-		|A_EXPN DIV A_EXPN
-		|A_EXPN MOD A_EXPN	{ check_mod = 1; }
-		|A_EXPN EXP A_EXPN
-		|A_EXPN UMINUS
-		|A_EXPN UPLUS 
-		|LB A_EXPN RB 
-        |NUMINT
-		|VAR {
-				if((temp=lookup_in_table($1))!=-1)
+			|A_EXPN MINUS A_EXPN
+			|A_EXPN MUL A_EXPN
+			|A_EXPN DIV A_EXPN
+			|A_EXPN MOD A_EXPN	{ check_mod = 1; }
+			|A_EXPN EXP A_EXPN
+			|A_EXPN UMINUS
+			|A_EXPN UPLUS 
+			|LB A_EXPN RB 
+			|NUMINT
+			|VAR COMPLEX_VAR
+			{
+				if((temp=lookup_in_table($1, dimension_count, empty_array))!=-1)
 				{
 					if(expn_type==-1)
 					{
@@ -208,26 +277,66 @@ A_EXPN		: A_EXPN PLUS A_EXPN
 					
 					else if(expn_type!=temp)
 					{
-						printf("\ntype mismatch in the expression\n");
+						extern int yylineno; 
+						printf("\nType mismatch in the expression. Line number %d\n", yylineno);
 						exit(0);
 					}
 				}
 				else
 				{
-					printf("\n variable \"%s\" undeclared\n",$1);exit(0);
+					printf("\n variable \"%s\" undeclared\n",$1);
+					exit(0);
 				}
-		    }
+				dimension_count = 0; 
+				for(int j=0; j<5; j++)
+				{
+					empty_array[j] = 0; 
+				}
+			}
+			|VAR 
+			{
+				if((temp=lookup_in_table($1, 0, empty_array))!=-1)
+				{
+					if(expn_type==-1)
+					{
+						expn_type=temp;
+					}
+					
+					else if(expn_type!=temp)
+					{
+						extern int yylineno; 
+						printf("\nType mismatch in the expression. Line number %d\n", yylineno);
+						exit(0);
+					}
+				}
+				else
+				{
+					printf("\n variable \"%s\" undeclared\n",$1);
+					exit(0);
+				}
+			}
 %%
 
-int lookup_in_table(char var[30])//returns the data type associated with 
+int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5])//returns the data type associated with 
 {
-	//check for indexes
 	int found_in_table = 0, i;
 	for(i=0; i<=var_count; i++)
 	{
 		if(strcmp(var_list[i].var_name, var)==0)
 		{
 			found_in_table = 1;
+			if(var_list[i].is_array==this_is_array && this_is_array!=0)
+			{
+				for(int j=0; j<5; j++)
+				{
+					if(this_dim_seq[j]<0 || var_list[i].dimension_sequence[j]<=this_dim_seq[j])
+					{
+						extern int yylineno; 
+						printf("Array index out of bounds. Line number %d\n", yylineno); 
+						exit(0); 
+					}
+				}
+			}
 			break;
 		}
 	}
@@ -259,7 +368,15 @@ void insert_to_table(char var[30], int newtype, int new_is_array, int new_dim_se
 	{
 		var_list[var_count].dimension_sequence[i] = new_dim_seq[i]; 
 	}
+
+	printf("Variable name: %s\nType: %d\nDimension count: %d\nDimensions: ", var, newtype, new_is_array);
+	for(int i=0; i<5; i++)
+	{
+		printf("%d ",var_list[var_count].dimension_sequence[i]);
+	}
+	printf("\n");
 }
+
 int main()
 {
     yyparse();

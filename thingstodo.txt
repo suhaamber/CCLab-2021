@@ -1,0 +1,3 @@
+fix for loop 
+add complex variable in logical expression
+all of lab_06

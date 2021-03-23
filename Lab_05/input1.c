@@ -10,7 +10,7 @@ int main()
 	{
 		str[i]=str[i]+i;
 	}
-	for (i=0;i<prelength;i++)
+	for (i+1; i<prelength; i++)
 	{
 		a[i][i][i]=i;
 	}

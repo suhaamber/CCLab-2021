@@ -1035,12 +1035,12 @@ YY_RULE_SETUP
 case 44:
 YY_RULE_SETUP
 #line 56 "project.l"
-{yylval.num_int = (int)yytext; return NUMINT; }
+{yylval.num_int = atoi(yytext); return NUMINT; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 57 "project.l"
-{yylval.num_int = (int)yytext; return NUMINT; }
+{yylval.num_int = atoi(yytext); return NUMINT; }
 	YY_BREAK
 case 46:
 /* rule 46 can match eol */
