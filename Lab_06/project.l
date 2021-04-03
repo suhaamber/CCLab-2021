@@ -59,7 +59,7 @@
 [a-z]+  {strcpy(yylval.var_name,yytext);return VAR;}
 [1-9][0-9]* {yylval.num_int = atoi(yytext); return NUMINT; }
 [0]  		{yylval.num_int = atoi(yytext); return NUMINT; }
-[\n\t" "]+  {/*new line or space*/}
+[\n\t ]+  {/*new line or space*/}
 . {printf("invalid character sequence %s\n",yytext); exit(0);}
 %%
 
