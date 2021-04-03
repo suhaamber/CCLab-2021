@@ -14,10 +14,10 @@
     int empty_array[5] = {0,0,0,0,0};
 	int dimension_count = 0; 
     int nested_block_count = 0; 
-    struct symbol_table{char var_name[30]; int type, is_array; int dimension_sequence[5]; } var_list[5][20];
+    struct symbol_table{char var_name[30]; int type, is_array; int dimension_sequence[5], pointer_depth; } var_list[5][20];
 	
-    extern int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5]);
-	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5]);
+    extern int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5], this_pointer_depth);
+	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5], this_pointer_depth);
 	
 %}
 
@@ -83,6 +83,8 @@ STATEMENT:        BLOCK
                 | IF LB EXPRESSION RB BLOCK ELSE BLOCK
                 | IF LB EXPRESSION RB BLOCK
                 | WHILE LB EXPRESSION RB BLOCK 
+                | DO LCB BLOCK RCB WHILE LB EXPRESSION RB SC 
+                | LB EXPRESSION RB QUESM BLOCK COLON BLOCK SC
                 | FOR LB ASSIGNMENT SC EXPRESSION SC ASSIGNMENT RB BLOCK
                 | ASSIGNMENT SC 
                 | DECLARATION_STATEMENT SC
@@ -90,11 +92,13 @@ STATEMENT:        BLOCK
 
 ASSIGNMENT:      VAR EQ EXPRESSION
                 |VAR DIMENSION_SEQUENCE EQ EXPRESSION
+                |VAR STAR_SEQUENCE EQ EXPRESSION
 
 EXPRESSION:      NOT EXPRESSION
                 |EXPRESSION BINOP EXPRESSION
                 |EXPRESSION RELOP EXPRESSION
                 |EXPRESSION LOGOP EXPRESSION
+                |VAR STAR_SEQUENCE
                 |VAR DIMENSION_SEQUENCE
                 |VAR
                 |LB EXPRESSION RB
@@ -102,6 +106,9 @@ EXPRESSION:      NOT EXPRESSION
 
 DIMENSION_SEQUENCE: LSB NUMINT RSB DIMENSION_SEQUENCE
                         | LSB NUMINT RSB
+
+STAR_SEQUENCE: STAR STAR_SEQUENCE
+                | STAR
 
 BINOP: PLUS
         |MINUS
@@ -123,8 +130,15 @@ DECLARATION_STATEMENT: DATA_TYPE VAR_LIST
 
 VAR_LIST: VAR DECLARATION_SEQUENCE COMMA VAR_LIST 
 	|  VAR COMMA VAR_LIST 
+        |  VAR POINTER_SEQUENCE VAR_LIST
 	|  VAR DECLARATION_SEQUENCE 
 	|  VAR 
+
+DECLARATION_SEQUENCE: LSB NUMINT RSB DECLARATION_SEQUENCE
+                | LSB NUMINT RSB
+
+POINTER_SEQUENCE: STAR POINTER_SEQUENCE
+                | STAR
 
 DATA_TYPE: INT
         | CHAR
@@ -132,66 +146,6 @@ DATA_TYPE: INT
         | DOUBLE
 
 %%
-
-int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5])//returns the data type associated with 
-{
-	int found_in_table = 0, i;
-	for(i=0; i<=var_count; i++)
-	{
-		if(strcmp(var_list[i].var_name, var)==0)
-		{
-			found_in_table = 1;
-			if(var_list[i].is_array==this_is_array && this_is_array!=0)
-			{
-				for(int j=0; j<5; j++)
-				{
-					if(this_dim_seq[j]<0 || var_list[i].dimension_sequence[j]<=this_dim_seq[j])
-					{
-						extern int yylineno; 
-						printf("Array index out of bounds. Line number %d\n", yylineno); 
-						exit(0); 
-					}
-				}
-			}
-			break;
-		}
-	}
-	//if var not found in the table
-	if(!found_in_table)
-	{
-		return -1;
-	}
-
-	//if var found
-	return var_list[i].type;
-}
-void insert_to_table(char var[30], int newtype, int new_is_array, int new_dim_seq[5])
-{
-	for(int i=0; i<=var_count; i++)
-	{
-		if(strcmp(var_list[i].var_name, var)==0)
-		{
-			printf("multiple declaration of %s\n", var);
-			exit(0);
-		}
-	}
-
-	var_count++;
-	strcpy(var_list[var_count].var_name, var);
-	var_list[var_count].type = newtype;
-	var_list[var_count].is_array = new_is_array; 
-	for(int i=0; i<5; i++)
-	{
-		var_list[var_count].dimension_sequence[i] = new_dim_seq[i]; 
-	}
-
-	printf("Variable name: %s\nType: %d\nDimension count: %d\nDimensions: ", var, newtype, new_is_array);
-	for(int i=0; i<5; i++)
-	{
-		printf("%d ",var_list[var_count].dimension_sequence[i]);
-	}
-	printf("\n");
-}
 
 int main()
 {
