@@ -16,8 +16,8 @@
     int nested_block_count = 0; 
     struct symbol_table{char var_name[30]; int type, is_array; int dimension_sequence[5], pointer_depth; } var_list[5][20];
 	
-    extern int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5], this_pointer_depth);
-	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5], this_pointer_depth);
+    extern int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5], int this_pointer_depth);
+	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5], int this_pointer_depth);
 	
 %}
 
@@ -34,6 +34,7 @@ int num_int;
 %token EQCOMPARE NEQCOMPARE EQ GTE LTE GT LT NOT AND OR 
 %token IF ELSE FOR DO WHILE 
 %token VAR NUMINT
+%token COMMENT
 
 %left UPLUS UMINUS
 %left PLUS MINUS MOD MUL DIV
@@ -62,17 +63,16 @@ prm: HEADERS MAIN_TYPE MAIN LB RB BLOCK
 MAIN_TYPE : INT
 
 HEADERS:  HEADER HEADERS
-        |HEADER
+        | HEADER
 
-HEADER:  HASH INCLUDE LT VAR DOTH GT
-        |HASH INCLUDE LT DOUBLEQ DIV PATH VAR DOTC DOUBLEQ GT
+HEADER	: HASH INCLUDE LT VAR DOTH GT 
+        | HASH INCLUDE DOUBLEQ PATH VAR DOTH DOUBLEQ
 
-PATH:    VAR DIV PATH
-        | {//epsilon
-                }
+PATH :  PATH VAR DIV      
+        | DIV 
+        | /*Epsilon*/
 
-BLOCK: LCB BODY RCB {//symbol table tingz here
-                     }
+BLOCK: LCB BODY RCB 
 
 BODY: STATEMENTS
 
@@ -88,17 +88,19 @@ STATEMENT:        BLOCK
                 | FOR LB ASSIGNMENT SC EXPRESSION SC ASSIGNMENT RB BLOCK
                 | ASSIGNMENT SC 
                 | DECLARATION_STATEMENT SC
+                | COMMENT
                 | SC
 
 ASSIGNMENT:      VAR EQ EXPRESSION
                 |VAR DIMENSION_SEQUENCE EQ EXPRESSION
-                |VAR STAR_SEQUENCE EQ EXPRESSION
+                |STAR_SEQUENCE EXPRESSION EQ EXPRESSION
 
-EXPRESSION:      NOT EXPRESSION
+EXPRESSION:      AMPERSAND EXPRESSION
+                |NOT EXPRESSION
                 |EXPRESSION BINOP EXPRESSION
                 |EXPRESSION RELOP EXPRESSION
                 |EXPRESSION LOGOP EXPRESSION
-                |VAR STAR_SEQUENCE
+                |STAR_SEQUENCE EXPRESSION
                 |VAR DIMENSION_SEQUENCE
                 |VAR
                 |LB EXPRESSION RB
@@ -130,8 +132,9 @@ DECLARATION_STATEMENT: DATA_TYPE VAR_LIST
 
 VAR_LIST: VAR DECLARATION_SEQUENCE COMMA VAR_LIST 
 	|  VAR COMMA VAR_LIST 
-        |  VAR POINTER_SEQUENCE VAR_LIST
+        |  POINTER_SEQUENCE VAR COMMA VAR_LIST
 	|  VAR DECLARATION_SEQUENCE 
+        |  POINTER_SEQUENCE VAR
 	|  VAR 
 
 DECLARATION_SEQUENCE: LSB NUMINT RSB DECLARATION_SEQUENCE
