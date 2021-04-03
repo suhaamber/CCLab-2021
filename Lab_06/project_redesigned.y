@@ -11,13 +11,13 @@
 	int temp;
 	int check_mod = 0;
 	int var_count=-1;
-    int empty_array[5] = {0,0,0,0,0};
+        int empty_array[5] = {0,0,0,0,0};
 	int dimension_count = 0; 
-    int nested_block_count = 0; 
-    struct symbol_table{char var_name[30]; int type, is_array; int dimension_sequence[5], pointer_depth; } var_list[5][20];
+        int nested_block_count = 0; 
+        struct symbol_table{char var_name[30]; int type, is_array; int dimension_sequence[5], pointer_depth; } var_list[20];
 	
-    extern int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5], int this_pointer_depth);
-	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5], int this_pointer_depth);
+        extern int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5]);
+	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5]);
 	
 %}
 
@@ -27,14 +27,14 @@ char var_name[30];
 int num_int; 
 }
 
-%token INCLUDE MAIN DOTH DOTC HASH DOUBLEQ 
+%token INCLUDE HEADER_FILE MAIN DOTH DOTC HASH DOUBLEQ 
 %token LB RB LCB RCB LSB RSB COMMA SC 
 %token UPLUS UMINUS EXP QUESM COLON STAR AMPERSAND 
 %token PLUS MINUS MOD MUL DIV
 %token EQCOMPARE NEQCOMPARE EQ GTE LTE GT LT NOT AND OR 
 %token IF ELSE FOR DO WHILE 
 %token VAR NUMINT
-%token COMMENT
+%token COMMENT 
 
 %left UPLUS UMINUS
 %left PLUS MINUS MOD MUL DIV
@@ -58,19 +58,15 @@ int num_int;
 
 %%
 
-prm: HEADERS MAIN_TYPE MAIN LB RB BLOCK
+prm: HEADERS MAIN_TYPE MAIN LB RB BLOCK {
+							printf("\n parsing successful\n");
+						   }
 
 MAIN_TYPE : INT
 
-HEADERS:  HEADER HEADERS
-        | HEADER
-
-HEADER	: HASH INCLUDE LT VAR DOTH GT 
-        | HASH INCLUDE DOUBLEQ PATH VAR DOTH DOUBLEQ
-
-PATH :  PATH VAR DIV      
-        | DIV 
-        | /*Epsilon*/
+HEADERS : HEADER HEADERS | HEADER
+HEADER	: HASH INCLUDE LT HEADER_FILE GT | HASH INCLUDE DOUBLEQ HEADER2 HEADER_FILE DOUBLEQ
+HEADER2 : HEADER2 VAR DIV | DIV | /*Epsilon*/
 
 BLOCK: LCB BODY RCB 
 
@@ -149,6 +145,66 @@ DATA_TYPE: INT
         | DOUBLE
 
 %%
+
+int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5])
+{
+	int found_in_table = 0, i;
+	for(i=0; i<=var_count; i++)
+	{
+		if(strcmp(var_list[i].var_name, var)==0)
+		{
+			found_in_table = 1;
+			if(var_list[i].is_array==this_is_array && this_is_array!=0)
+			{
+				for(int j=0; j<5; j++)
+				{
+					if(this_dim_seq[j]<0 || var_list[i].dimension_sequence[j]<=this_dim_seq[j])
+					{
+						extern int yylineno; 
+						printf("Array index out of bounds. Line number %d\n", yylineno); 
+						exit(0); 
+					}
+				}
+			}
+			break;
+		}
+	}
+	//if var not found in the table
+	if(!found_in_table)
+	{
+		return -1;
+	}
+
+	//if var found
+	return var_list[i].type;
+}
+void insert_to_table(char var[30], int newtype, int new_is_array, int new_dim_seq[5])
+{
+	for(int i=0; i<=var_count; i++)
+	{
+		if(strcmp(var_list[i].var_name, var)==0)
+		{
+			printf("multiple declaration of %s\n", var);
+			exit(0);
+		}
+	}
+
+	var_count++;
+	strcpy(var_list[var_count].var_name, var);
+	var_list[var_count].type = newtype;
+	var_list[var_count].is_array = new_is_array; 
+	for(int i=0; i<5; i++)
+	{
+		var_list[var_count].dimension_sequence[i] = new_dim_seq[i]; 
+	}
+
+	printf("Variable name: %s\nType: %d\nDimension count: %d\nDimensions: ", var, newtype, new_is_array);
+	for(int i=0; i<5; i++)
+	{
+		printf("%d ",var_list[var_count].dimension_sequence[i]);
+	}
+	printf("\n");
+}
 
 int main()
 {
