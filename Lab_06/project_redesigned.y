@@ -11,13 +11,14 @@
 	int temp;
 	int check_mod = 0;
 	int var_count=-1;
-        int empty_array[5] = {0,0,0,0,0};
+	int empty_array[5] = {0,0,0,0,0};
 	int dimension_count = 0; 
-        int nested_block_count = 0; 
-        struct symbol_table{char var_name[30]; int type, is_array; int dimension_sequence[5], pointer_depth; } var_list[20];
+	int nested_block_count = 0; 
+	int number_of_stars = 0; 
 	
-        extern int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5]);
-	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5]);
+	struct symbol_table{char var_name[30]; int type, is_array; int dimension_sequence[5], pointer_depth; } var_list[20];
+	extern int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5], int this_pointer_depth);
+	extern void insert_to_table(char var[30], int type, int new_is_array, int new_dim_seq[5], int this_pointer_depth);
 	
 %}
 
@@ -27,17 +28,17 @@ char var_name[30];
 int num_int; 
 }
 
-%token INCLUDE HEADER_FILE MAIN DOTH DOTC HASH DOUBLEQ 
+%token INCLUDE HEADER_FILE MAIN HASH DOUBLEQ 
 %token LB RB LCB RCB LSB RSB COMMA SC 
 %token UPLUS UMINUS EXP QUESM COLON STAR AMPERSAND 
-%token PLUS MINUS MOD MUL DIV
+%token PLUS MINUS MOD DIV
 %token EQCOMPARE NEQCOMPARE EQ GTE LTE GT LT NOT AND OR 
 %token IF ELSE FOR DO WHILE 
 %token VAR NUMINT
 %token COMMENT 
 
 %left UPLUS UMINUS
-%left PLUS MINUS MOD MUL DIV
+%left PLUS MINUS MOD STAR DIV
 %left OR AND EQCOMPARE NEQCOMPARE
 %left GTE GT LTE LT
 
@@ -88,31 +89,158 @@ STATEMENT:        BLOCK
                 | SC
 
 ASSIGNMENT:      VAR EQ EXPRESSION
+				{	
+					
+					if((temp=lookup_in_table($1, 0, empty_array, 0))!=-1)
+					{
+						if(check_mod==1)
+						{
+							if(expn_type!=0 && temp!=0)
+							{
+								printf("Both types not int.\n");
+								exit(0); 
+							}
+							check_mod=0;
+						}
+						if(expn_type==-1)
+						{
+							expn_type=temp;
+						}
+						
+						else if(expn_type!=temp)
+						{
+							extern int yylineno;
+							printf("\nType mismatch in the expression. Line number %d\n", yylineno);
+							exit(0);
+						}
+					}
+					else
+					{
+						printf("\n variable \"%s\" undeclared\n",$1);exit(0);
+					}
+					expn_type=-1;	
+				}
                 |VAR DIMENSION_SEQUENCE EQ EXPRESSION
+				{
+					if((temp=lookup_in_table($1, dimension_count, empty_array, 0))!=-1)
+					{
+						if(check_mod==1)
+						{
+							if(expn_type!=0 && temp!=0)
+							{
+								printf("Both types not int.\n");
+								exit(0); 
+							}
+							check_mod=0;
+						}
+						if(expn_type==-1)
+						{
+							expn_type=temp;
+						}
+						
+						else if(expn_type!=temp)
+						{
+							extern int yylineno;
+							printf("\nType mismatch in the expression. Line number %d\n", yylineno);
+							exit(0);
+						}
+					}
+					else
+					{
+						printf("\n variable \"%s\" undeclared\n",$1);exit(0);
+					}
+					expn_type=-1;	
+					dimension_count = 1; 
+					for(int i=0; i<5; i++) 
+					{
+						empty_array[i] = 0; 
+					}
+				}
                 |STAR_SEQUENCE EXPRESSION EQ EXPRESSION
 
 EXPRESSION:      AMPERSAND EXPRESSION
                 |NOT EXPRESSION
+				|EXPRESSION UNARYOP
                 |EXPRESSION BINOP EXPRESSION
                 |EXPRESSION RELOP EXPRESSION
                 |EXPRESSION LOGOP EXPRESSION
                 |STAR_SEQUENCE EXPRESSION
                 |VAR DIMENSION_SEQUENCE
+				{
+					printf("DIM_COUNT %d\n", dimension_count); 
+					if(lookup_in_table($1, dimension_count, empty_array, 0)==-1)
+					{
+						if(expn_type==-1)
+						{
+							expn_type=temp;
+						}
+						
+						else if(expn_type!=temp)
+						{
+							extern int yylineno; 
+							printf("\nType mismatch in the expression. Line number %d\n", yylineno);
+							exit(0);
+						}
+					}
+					dimension_count = 0; 
+					for(int j=0; j<5; j++)
+					{
+						empty_array[j] = 0; 
+					}
+				}
                 |VAR
+				{
+					if(lookup_in_table($1, 0, empty_array, 0)==-1)
+					{
+						if(expn_type==-1)
+						{
+							expn_type=temp;
+						}
+						
+						else if(expn_type!=temp)
+						{
+							extern int yylineno; 
+							printf("\nType mismatch in the expression. Line number %d\n", yylineno);
+							exit(0);
+						}
+					}
+				}
                 |LB EXPRESSION RB
                 |NUMINT
 
-DIMENSION_SEQUENCE: LSB NUMINT RSB DIMENSION_SEQUENCE
-                        | LSB NUMINT RSB
+DIMENSION_SEQUENCE:   LSB NUMINT RSB DIMENSION_SEQUENCE
+					{
+						empty_array[dimension_count] = $2; 
+						dimension_count++;
+					}
+					| LSB VAR RSB DIMENSION_SEQUENCE
+					{
+						empty_array[dimension_count] = 0; 
+						dimension_count++;
+					}
+					| LSB VAR RSB                        
+					{
+						empty_array[dimension_count] = 0; 
+						dimension_count++;
+					}					
+					| LSB NUMINT RSB
+					{
+						empty_array[dimension_count] = $2; 
+						dimension_count++;
+					}
 
 STAR_SEQUENCE: STAR STAR_SEQUENCE
                 | STAR
+
+UNARYOP: UPLUS
+		|UMINUS
 
 BINOP: PLUS
         |MINUS
         |STAR
         |DIV
-        |MOD
+        |MOD	{check_mod = 1; }
+		|EXP
 
 RELOP: EQCOMPARE
         |NEQCOMPARE
@@ -126,33 +254,87 @@ LOGOP: AND
 
 DECLARATION_STATEMENT: DATA_TYPE VAR_LIST 
 
-VAR_LIST: VAR DECLARATION_SEQUENCE COMMA VAR_LIST 
-	|  VAR COMMA VAR_LIST 
-        |  POINTER_SEQUENCE VAR COMMA VAR_LIST
-	|  VAR DECLARATION_SEQUENCE 
-        |  POINTER_SEQUENCE VAR
-	|  VAR 
+VAR_LIST:  POINTER_SEQUENCE VAR DECLARATION_SEQUENCE 
+		{
+			insert_to_table($2, current_data_type, dimension_count, empty_array, number_of_stars); 
+			dimension_count = 0; 
+			for(int i=0; i<5; i++) 
+			{
+				empty_array[i] = 0; 
+			}
+			number_of_stars = 0; 
+		} COMMA VAR_LIST 
+		|  POINTER_SEQUENCE VAR DECLARATION_SEQUENCE
+		{
+			
+			insert_to_table($2, current_data_type, dimension_count, empty_array, number_of_stars); 
+			dimension_count = 0; 
+			for(int i=0; i<5; i++) 
+			{
+				empty_array[i] = 0; 
+			}
+			number_of_stars = 0; 
+		} 
+		|  POINTER_SEQUENCE VAR 
+		{
+			insert_to_table($2,current_data_type, dimension_count, empty_array, number_of_stars);
+			number_of_stars = 0; 
+		} COMMA VAR_LIST 
+		|  POINTER_SEQUENCE VAR 
+		{
+			insert_to_table($2,current_data_type, dimension_count, empty_array, number_of_stars);
+			number_of_stars = 0; 
+		}
 
 DECLARATION_SEQUENCE: LSB NUMINT RSB DECLARATION_SEQUENCE
+					{
+						empty_array[dimension_count] = $2; 
+						dimension_count++;
+					}
                 | LSB NUMINT RSB
+					{
+						empty_array[dimension_count] = $2; 
+						dimension_count++;
+					}
 
 POINTER_SEQUENCE: STAR POINTER_SEQUENCE
-                | STAR
+				{
+					number_of_stars++; 
+				}
+                | /*Epsilon*/
 
-DATA_TYPE: INT
-        | CHAR
-        | FLOAT
-        | DOUBLE
+DATA_TYPE: INT {
+			$$=$1;
+			current_data_type=$1;
+		} 
+        | CHAR {
+			$$=$1;
+			current_data_type=$1;
+		} 
+        | FLOAT {
+			$$=$1;
+			current_data_type=$1;
+		} 
+        | DOUBLE {
+			$$=$1;
+			current_data_type=$1;
+		} 
 
 %%
 
-int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5])
+int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5], int this_pointer_depth)
 {
 	int found_in_table = 0, i;
 	for(i=0; i<=var_count; i++)
 	{
+		extern int yylineno; 
 		if(strcmp(var_list[i].var_name, var)==0)
 		{
+			if(var_list[i].is_array!=this_is_array)
+			{
+				printf("Array dimensions of %s in line number %d do not match.\n", var, yylineno);
+				exit(0); 
+			}
 			found_in_table = 1;
 			if(var_list[i].is_array==this_is_array && this_is_array!=0)
 			{
@@ -160,7 +342,6 @@ int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5])
 				{
 					if(this_dim_seq[j]<0 || var_list[i].dimension_sequence[j]<=this_dim_seq[j])
 					{
-						extern int yylineno; 
 						printf("Array index out of bounds. Line number %d\n", yylineno); 
 						exit(0); 
 					}
@@ -178,7 +359,7 @@ int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5])
 	//if var found
 	return var_list[i].type;
 }
-void insert_to_table(char var[30], int newtype, int new_is_array, int new_dim_seq[5])
+void insert_to_table(char var[30], int newtype, int new_is_array, int new_dim_seq[5], int new_pointer_depth)
 {
 	for(int i=0; i<=var_count; i++)
 	{
@@ -193,12 +374,13 @@ void insert_to_table(char var[30], int newtype, int new_is_array, int new_dim_se
 	strcpy(var_list[var_count].var_name, var);
 	var_list[var_count].type = newtype;
 	var_list[var_count].is_array = new_is_array; 
+	var_list[var_count].pointer_depth = new_pointer_depth;
 	for(int i=0; i<5; i++)
 	{
 		var_list[var_count].dimension_sequence[i] = new_dim_seq[i]; 
 	}
 
-	printf("Variable name: %s\nType: %d\nDimension count: %d\nDimensions: ", var, newtype, new_is_array);
+	printf("Variable name: %s\nType: %d\nDimension count: %d\nPointer depth: %d\nDimensions: ", var, newtype, new_is_array, new_pointer_depth);
 	for(int i=0; i<5; i++)
 	{
 		printf("%d ",var_list[var_count].dimension_sequence[i]);

@@ -6,9 +6,9 @@ int main()
 	char str[20];
 	int a[20][30][40];
 	int prelength;
-	for (i=0;i<prelength;i++)
+	for (i=0;i<prelength;i=i+1;)
 	{
-		str[i]=str[i]+i;
+		a[i]=a[i]+i;
 	}
 	for (i+1; i<prelength; i++)
 	{

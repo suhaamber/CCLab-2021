@@ -209,14 +209,9 @@ PROGRAM_STATEMENT : VAR COMPLEX_VAR EQ A_EXPN SC
 					| IF LB LOGICAL_EXPN RB LCB BODY RCB ELSE LCB BODY RCB
 					| IF LB LOGICAL_EXPN RB LCB BODY RCB
                     | LB LOGICAL_EXPN RB QUESM LCB BODY RCB COLON LCB BODY RCB
-                    | FOR LB FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN RB LCB BODY RCB
+                    | FOR LB PROGRAM_STATEMENT  LOGICAL_EXPN SC PROGRAM_STATEMENT RB LCB BODY RCB
                     | WHILE LB LOGICAL_EXPN RB LCB BODY RCB
                     | DO LCB BODY RCB WHILE LB LOGICAL_EXPN RB SC
-					
-FOR_EXPN : VAR EQ A_EXPN
-		| VAR COMPLEX_VAR EQ A_EXPN
-		| VAR UPLUS
-		| VAR UMINUS
 
 COMPLEX_VAR : LSB VAR RSB COMPLEX_VAR
 			{
@@ -250,6 +245,19 @@ LOGICAL_EXPN : LOGICAL_EXPN OR LOGICAL_EXPN
 			| NOT LOGICAL_EXPN
 			| LB LOGICAL_EXPN RB
             | NUMINT
+			| VAR COMPLEX_VAR
+			{
+				if(lookup_in_table($1, dimension_count, empty_array)==-1)
+				{
+					printf("\n variable \"%s\" undeclared\n",$1);
+					exit(0);
+				}
+				dimension_count = 0; 
+				for(int j=0; j<5; j++)
+				{
+					empty_array[j] = 0; 
+				}
+			}
 			| VAR {
 				if(lookup_in_table($1, 0, empty_array)==-1)
 				{

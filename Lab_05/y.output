@@ -1,3 +1,16 @@
+Nonterminals useless in grammar
+
+   FOR_EXPN
+
+
+Rules useless in grammar
+
+   65 FOR_EXPN: VAR EQ A_EXPN
+   66         | VAR COMPLEX_VAR EQ A_EXPN
+   67         | VAR UPLUS
+   68         | VAR UMINUS
+
+
 Rules useless in parser due to conflicts
 
     7 PATH: VAR DIV
@@ -57,45 +70,41 @@ Grammar
    30                  | IF LB LOGICAL_EXPN RB LCB BODY RCB ELSE LCB BODY RCB
    31                  | IF LB LOGICAL_EXPN RB LCB BODY RCB
    32                  | LB LOGICAL_EXPN RB QUESM LCB BODY RCB COLON LCB BODY RCB
-   33                  | FOR LB FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN RB LCB BODY RCB
+   33                  | FOR LB PROGRAM_STATEMENT LOGICAL_EXPN SC PROGRAM_STATEMENT RB LCB BODY RCB
    34                  | WHILE LB LOGICAL_EXPN RB LCB BODY RCB
    35                  | DO LCB BODY RCB WHILE LB LOGICAL_EXPN RB SC
 
-   36 FOR_EXPN: VAR EQ A_EXPN
-   37         | VAR COMPLEX_VAR EQ A_EXPN
-   38         | VAR UPLUS
-   39         | VAR UMINUS
+   36 COMPLEX_VAR: LSB VAR RSB COMPLEX_VAR
+   37            | LSB NUMINT RSB COMPLEX_VAR
+   38            | LSB VAR RSB
+   39            | LSB NUMINT RSB
 
-   40 COMPLEX_VAR: LSB VAR RSB COMPLEX_VAR
-   41            | LSB NUMINT RSB COMPLEX_VAR
-   42            | LSB VAR RSB
-   43            | LSB NUMINT RSB
+   40 LOGICAL_EXPN: LOGICAL_EXPN OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN LT LOGICAL_EXPN
+   48             | NOT LOGICAL_EXPN
+   49             | LB LOGICAL_EXPN RB
+   50             | NUMINT
+   51             | VAR COMPLEX_VAR
+   52             | VAR
 
-   44 LOGICAL_EXPN: LOGICAL_EXPN OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN LT LOGICAL_EXPN
-   52             | NOT LOGICAL_EXPN
-   53             | LB LOGICAL_EXPN RB
-   54             | NUMINT
-   55             | VAR
-
-   56 A_EXPN: A_EXPN PLUS A_EXPN
-   57       | A_EXPN MINUS A_EXPN
-   58       | A_EXPN MUL A_EXPN
-   59       | A_EXPN DIV A_EXPN
-   60       | A_EXPN MOD A_EXPN
-   61       | A_EXPN EXP A_EXPN
-   62       | A_EXPN UMINUS
-   63       | A_EXPN UPLUS
-   64       | LB A_EXPN RB
-   65       | NUMINT
-   66       | VAR COMPLEX_VAR
-   67       | VAR
+   53 A_EXPN: A_EXPN PLUS A_EXPN
+   54       | A_EXPN MINUS A_EXPN
+   55       | A_EXPN MUL A_EXPN
+   56       | A_EXPN DIV A_EXPN
+   57       | A_EXPN MOD A_EXPN
+   58       | A_EXPN EXP A_EXPN
+   59       | A_EXPN UMINUS
+   60       | A_EXPN UPLUS
+   61       | LB A_EXPN RB
+   62       | NUMINT
+   63       | VAR COMPLEX_VAR
+   64       | VAR
 
 
 Terminals, with rules where they appear
@@ -103,41 +112,41 @@ Terminals, with rules where they appear
 $end (0) 0
 error (256)
 MAIN (258) 1
-LB (259) 1 30 31 32 33 34 35 53 64
-RB (260) 1 30 31 32 33 34 35 53 64
+LB (259) 1 30 31 32 33 34 35 49 61
+RB (260) 1 30 31 32 33 34 35 49 61
 LCB (261) 1 30 31 32 33 34 35
 RCB (262) 1 30 31 32 33 34 35
-LSB (263) 19 20 40 41 42 43
-RSB (264) 19 20 40 41 42 43
+LSB (263) 19 20 36 37 38 39
+RSB (264) 19 20 36 37 38 39
 SC (265) 14 29 33 35
 COMA (266) 15 16
-VAR (267) 4 5 6 7 15 16 17 18 29 36 37 38 39 40 42 55 66 67
-EQ (268) 29 36 37
-PLUS (269) 56
-MINUS (270) 57
-MUL (271) 58
-DIV (272) 5 6 7 59
-MOD (273) 60
-EXP (274) 61
-UPLUS (275) 38 63
-UMINUS (276) 39 62
+VAR (267) 4 5 6 7 15 16 17 18 29 36 38 51 52 63 64
+EQ (268) 29
+PLUS (269) 53
+MINUS (270) 54
+MUL (271) 55
+DIV (272) 5 6 7 56
+MOD (273) 57
+EXP (274) 58
+UPLUS (275) 60
+UMINUS (276) 59
 IF (277) 30 31
 ELSE (278) 30
-EQCOMPARE (279) 46
-NEQCOMPARE (280) 47
-GTE (281) 48
-LTE (282) 49
-GT (283) 4 5 50
-LT (284) 4 5 51
-NOT (285) 52
-AND (286) 45
-OR (287) 44
+EQCOMPARE (279) 42
+NEQCOMPARE (280) 43
+GTE (281) 44
+LTE (282) 45
+GT (283) 4 5 46
+LT (284) 4 5 47
+NOT (285) 48
+AND (286) 41
+OR (287) 40
 QUESM (288) 32
 COLON (289) 32
 FOR (290) 33
 WHILE (291) 34 35
 DO (292) 35
-NUMINT (293) 19 20 41 43 54 65
+NUMINT (293) 19 20 37 39 50 62
 INCLUDE (294) 4 5
 HASH (295) 4 5
 DOTH (296) 4 5
@@ -177,19 +186,17 @@ DATA_TYPE (58)
 PROGRAM_STATEMENTS (59)
     on left: 26 27, on right: 9 10 26
 PROGRAM_STATEMENT (60)
-    on left: 29 30 31 32 33 34 35, on right: 26 27
+    on left: 29 30 31 32 33 34 35, on right: 26 27 33
 $@1 (61)
     on left: 28, on right: 29
-FOR_EXPN (62)
-    on left: 36 37 38 39, on right: 33
-COMPLEX_VAR (63)
-    on left: 40 41 42 43, on right: 29 37 40 41 66
-LOGICAL_EXPN (64)
-    on left: 44 45 46 47 48 49 50 51 52 53 54 55, on right: 30 31 32
-    33 34 35 44 45 46 47 48 49 50 51 52 53
-A_EXPN (65)
-    on left: 56 57 58 59 60 61 62 63 64 65 66 67, on right: 29 36 37
-    56 57 58 59 60 61 62 63 64
+COMPLEX_VAR (62)
+    on left: 36 37 38 39, on right: 29 36 37 51 63
+LOGICAL_EXPN (63)
+    on left: 40 41 42 43 44 45 46 47 48 49 50 51 52, on right: 30 31
+    32 33 34 35 40 41 42 43 44 45 46 47 48 49
+A_EXPN (64)
+    on left: 53 54 55 56 57 58 59 60 61 62 63 64, on right: 29 53 54
+    55 56 57 58 59 60 61
 
 
 State 0
@@ -431,7 +438,7 @@ State 26
 
 State 27
 
-   33 PROGRAM_STATEMENT: FOR . LB FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN RB LCB BODY RCB
+   33 PROGRAM_STATEMENT: FOR . LB PROGRAM_STATEMENT LOGICAL_EXPN SC PROGRAM_STATEMENT RB LCB BODY RCB
 
     LB  shift, and go to state 50
 
@@ -607,7 +614,7 @@ State 41
 
 State 42
 
-   53 LOGICAL_EXPN: LB . LOGICAL_EXPN RB
+   49 LOGICAL_EXPN: LB . LOGICAL_EXPN RB
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
@@ -619,69 +626,74 @@ State 42
 
 State 43
 
-   55 LOGICAL_EXPN: VAR .
+   51 LOGICAL_EXPN: VAR . COMPLEX_VAR
+   52             | VAR .
 
-    $default  reduce using rule 55 (LOGICAL_EXPN)
+    LSB  shift, and go to state 47
+
+    $default  reduce using rule 52 (LOGICAL_EXPN)
+
+    COMPLEX_VAR  go to state 62
 
 
 State 44
 
-   52 LOGICAL_EXPN: NOT . LOGICAL_EXPN
+   48 LOGICAL_EXPN: NOT . LOGICAL_EXPN
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
     NOT     shift, and go to state 44
     NUMINT  shift, and go to state 45
 
-    LOGICAL_EXPN  go to state 62
+    LOGICAL_EXPN  go to state 63
 
 
 State 45
 
-   54 LOGICAL_EXPN: NUMINT .
+   50 LOGICAL_EXPN: NUMINT .
 
-    $default  reduce using rule 54 (LOGICAL_EXPN)
+    $default  reduce using rule 50 (LOGICAL_EXPN)
 
 
 State 46
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN . RB QUESM LCB BODY RCB COLON LCB BODY RCB
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
 
-    RB          shift, and go to state 63
-    EQCOMPARE   shift, and go to state 64
-    NEQCOMPARE  shift, and go to state 65
-    GTE         shift, and go to state 66
-    LTE         shift, and go to state 67
-    GT          shift, and go to state 68
-    LT          shift, and go to state 69
-    AND         shift, and go to state 70
-    OR          shift, and go to state 71
+    RB          shift, and go to state 64
+    EQCOMPARE   shift, and go to state 65
+    NEQCOMPARE  shift, and go to state 66
+    GTE         shift, and go to state 67
+    LTE         shift, and go to state 68
+    GT          shift, and go to state 69
+    LT          shift, and go to state 70
+    AND         shift, and go to state 71
+    OR          shift, and go to state 72
 
 
 State 47
 
-   40 COMPLEX_VAR: LSB . VAR RSB COMPLEX_VAR
-   41            | LSB . NUMINT RSB COMPLEX_VAR
-   42            | LSB . VAR RSB
-   43            | LSB . NUMINT RSB
+   36 COMPLEX_VAR: LSB . VAR RSB COMPLEX_VAR
+   37            | LSB . NUMINT RSB COMPLEX_VAR
+   38            | LSB . VAR RSB
+   39            | LSB . NUMINT RSB
 
-    VAR     shift, and go to state 72
-    NUMINT  shift, and go to state 73
+    VAR     shift, and go to state 73
+    NUMINT  shift, and go to state 74
 
 
 State 48
 
    29 PROGRAM_STATEMENT: VAR COMPLEX_VAR . EQ A_EXPN SC $@1 VAR EQ A_EXPN SC
 
-    EQ  shift, and go to state 74
+    EQ  shift, and go to state 75
 
 
 State 49
@@ -694,16 +706,21 @@ State 49
     NOT     shift, and go to state 44
     NUMINT  shift, and go to state 45
 
-    LOGICAL_EXPN  go to state 75
+    LOGICAL_EXPN  go to state 76
 
 
 State 50
 
-   33 PROGRAM_STATEMENT: FOR LB . FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN RB LCB BODY RCB
+   33 PROGRAM_STATEMENT: FOR LB . PROGRAM_STATEMENT LOGICAL_EXPN SC PROGRAM_STATEMENT RB LCB BODY RCB
 
-    VAR  shift, and go to state 76
+    LB     shift, and go to state 24
+    VAR    shift, and go to state 25
+    IF     shift, and go to state 26
+    FOR    shift, and go to state 27
+    WHILE  shift, and go to state 28
+    DO     shift, and go to state 29
 
-    FOR_EXPN  go to state 77
+    PROGRAM_STATEMENT  go to state 77
 
 
 State 51
@@ -807,52 +824,59 @@ State 60
 
 State 61
 
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
-   53             | LB LOGICAL_EXPN . RB
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
+   49             | LB LOGICAL_EXPN . RB
 
     RB          shift, and go to state 85
-    EQCOMPARE   shift, and go to state 64
-    NEQCOMPARE  shift, and go to state 65
-    GTE         shift, and go to state 66
-    LTE         shift, and go to state 67
-    GT          shift, and go to state 68
-    LT          shift, and go to state 69
-    AND         shift, and go to state 70
-    OR          shift, and go to state 71
+    EQCOMPARE   shift, and go to state 65
+    NEQCOMPARE  shift, and go to state 66
+    GTE         shift, and go to state 67
+    LTE         shift, and go to state 68
+    GT          shift, and go to state 69
+    LT          shift, and go to state 70
+    AND         shift, and go to state 71
+    OR          shift, and go to state 72
 
 
 State 62
 
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
-   52             | NOT LOGICAL_EXPN .
+   51 LOGICAL_EXPN: VAR COMPLEX_VAR .
 
-    $default  reduce using rule 52 (LOGICAL_EXPN)
+    $default  reduce using rule 51 (LOGICAL_EXPN)
 
 
 State 63
+
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
+   48             | NOT LOGICAL_EXPN .
+
+    $default  reduce using rule 48 (LOGICAL_EXPN)
+
+
+State 64
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN RB . QUESM LCB BODY RCB COLON LCB BODY RCB
 
     QUESM  shift, and go to state 86
 
 
-State 64
+State 65
 
-   46 LOGICAL_EXPN: LOGICAL_EXPN EQCOMPARE . LOGICAL_EXPN
+   42 LOGICAL_EXPN: LOGICAL_EXPN EQCOMPARE . LOGICAL_EXPN
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
@@ -862,9 +886,9 @@ State 64
     LOGICAL_EXPN  go to state 87
 
 
-State 65
+State 66
 
-   47 LOGICAL_EXPN: LOGICAL_EXPN NEQCOMPARE . LOGICAL_EXPN
+   43 LOGICAL_EXPN: LOGICAL_EXPN NEQCOMPARE . LOGICAL_EXPN
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
@@ -874,9 +898,9 @@ State 65
     LOGICAL_EXPN  go to state 88
 
 
-State 66
+State 67
 
-   48 LOGICAL_EXPN: LOGICAL_EXPN GTE . LOGICAL_EXPN
+   44 LOGICAL_EXPN: LOGICAL_EXPN GTE . LOGICAL_EXPN
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
@@ -886,9 +910,9 @@ State 66
     LOGICAL_EXPN  go to state 89
 
 
-State 67
+State 68
 
-   49 LOGICAL_EXPN: LOGICAL_EXPN LTE . LOGICAL_EXPN
+   45 LOGICAL_EXPN: LOGICAL_EXPN LTE . LOGICAL_EXPN
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
@@ -898,9 +922,9 @@ State 67
     LOGICAL_EXPN  go to state 90
 
 
-State 68
+State 69
 
-   50 LOGICAL_EXPN: LOGICAL_EXPN GT . LOGICAL_EXPN
+   46 LOGICAL_EXPN: LOGICAL_EXPN GT . LOGICAL_EXPN
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
@@ -910,9 +934,9 @@ State 68
     LOGICAL_EXPN  go to state 91
 
 
-State 69
+State 70
 
-   51 LOGICAL_EXPN: LOGICAL_EXPN LT . LOGICAL_EXPN
+   47 LOGICAL_EXPN: LOGICAL_EXPN LT . LOGICAL_EXPN
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
@@ -922,9 +946,9 @@ State 69
     LOGICAL_EXPN  go to state 92
 
 
-State 70
+State 71
 
-   45 LOGICAL_EXPN: LOGICAL_EXPN AND . LOGICAL_EXPN
+   41 LOGICAL_EXPN: LOGICAL_EXPN AND . LOGICAL_EXPN
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
@@ -934,9 +958,9 @@ State 70
     LOGICAL_EXPN  go to state 93
 
 
-State 71
+State 72
 
-   44 LOGICAL_EXPN: LOGICAL_EXPN OR . LOGICAL_EXPN
+   40 LOGICAL_EXPN: LOGICAL_EXPN OR . LOGICAL_EXPN
 
     LB      shift, and go to state 42
     VAR     shift, and go to state 43
@@ -946,23 +970,23 @@ State 71
     LOGICAL_EXPN  go to state 94
 
 
-State 72
+State 73
 
-   40 COMPLEX_VAR: LSB VAR . RSB COMPLEX_VAR
-   42            | LSB VAR . RSB
+   36 COMPLEX_VAR: LSB VAR . RSB COMPLEX_VAR
+   38            | LSB VAR . RSB
 
     RSB  shift, and go to state 95
 
 
-State 73
+State 74
 
-   41 COMPLEX_VAR: LSB NUMINT . RSB COMPLEX_VAR
-   43            | LSB NUMINT . RSB
+   37 COMPLEX_VAR: LSB NUMINT . RSB COMPLEX_VAR
+   39            | LSB NUMINT . RSB
 
     RSB  shift, and go to state 96
 
 
-State 74
+State 75
 
    29 PROGRAM_STATEMENT: VAR COMPLEX_VAR EQ . A_EXPN SC $@1 VAR EQ A_EXPN SC
 
@@ -973,80 +997,70 @@ State 74
     A_EXPN  go to state 100
 
 
-State 75
+State 76
 
    30 PROGRAM_STATEMENT: IF LB LOGICAL_EXPN . RB LCB BODY RCB ELSE LCB BODY RCB
    31                  | IF LB LOGICAL_EXPN . RB LCB BODY RCB
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
 
     RB          shift, and go to state 101
-    EQCOMPARE   shift, and go to state 64
-    NEQCOMPARE  shift, and go to state 65
-    GTE         shift, and go to state 66
-    LTE         shift, and go to state 67
-    GT          shift, and go to state 68
-    LT          shift, and go to state 69
-    AND         shift, and go to state 70
-    OR          shift, and go to state 71
-
-
-State 76
-
-   36 FOR_EXPN: VAR . EQ A_EXPN
-   37         | VAR . COMPLEX_VAR EQ A_EXPN
-   38         | VAR . UPLUS
-   39         | VAR . UMINUS
-
-    LSB     shift, and go to state 47
-    EQ      shift, and go to state 102
-    UPLUS   shift, and go to state 103
-    UMINUS  shift, and go to state 104
-
-    COMPLEX_VAR  go to state 105
+    EQCOMPARE   shift, and go to state 65
+    NEQCOMPARE  shift, and go to state 66
+    GTE         shift, and go to state 67
+    LTE         shift, and go to state 68
+    GT          shift, and go to state 69
+    LT          shift, and go to state 70
+    AND         shift, and go to state 71
+    OR          shift, and go to state 72
 
 
 State 77
 
-   33 PROGRAM_STATEMENT: FOR LB FOR_EXPN . SC LOGICAL_EXPN SC FOR_EXPN RB LCB BODY RCB
+   33 PROGRAM_STATEMENT: FOR LB PROGRAM_STATEMENT . LOGICAL_EXPN SC PROGRAM_STATEMENT RB LCB BODY RCB
 
-    SC  shift, and go to state 106
+    LB      shift, and go to state 42
+    VAR     shift, and go to state 43
+    NOT     shift, and go to state 44
+    NUMINT  shift, and go to state 45
+
+    LOGICAL_EXPN  go to state 102
 
 
 State 78
 
    34 PROGRAM_STATEMENT: WHILE LB LOGICAL_EXPN . RB LCB BODY RCB
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
 
-    RB          shift, and go to state 107
-    EQCOMPARE   shift, and go to state 64
-    NEQCOMPARE  shift, and go to state 65
-    GTE         shift, and go to state 66
-    LTE         shift, and go to state 67
-    GT          shift, and go to state 68
-    LT          shift, and go to state 69
-    AND         shift, and go to state 70
-    OR          shift, and go to state 71
+    RB          shift, and go to state 103
+    EQCOMPARE   shift, and go to state 65
+    NEQCOMPARE  shift, and go to state 66
+    GTE         shift, and go to state 67
+    LTE         shift, and go to state 68
+    GT          shift, and go to state 69
+    LT          shift, and go to state 70
+    AND         shift, and go to state 71
+    OR          shift, and go to state 72
 
 
 State 79
 
    35 PROGRAM_STATEMENT: DO LCB BODY . RCB WHILE LB LOGICAL_EXPN RB SC
 
-    RCB  shift, and go to state 108
+    RCB  shift, and go to state 104
 
 
 State 80
@@ -1054,7 +1068,7 @@ State 80
    19 DIMENSION_SEQUENCE: LSB . NUMINT RSB DIMENSION_SEQUENCE
    20                   | LSB . NUMINT RSB
 
-    NUMINT  shift, and go to state 109
+    NUMINT  shift, and go to state 105
 
 
 State 81
@@ -1063,7 +1077,7 @@ State 81
 
     VAR  shift, and go to state 56
 
-    VAR_LIST  go to state 110
+    VAR_LIST  go to state 106
 
 
 State 82
@@ -1071,7 +1085,7 @@ State 82
    15 VAR_LIST: VAR DIMENSION_SEQUENCE . COMA VAR_LIST
    17         | VAR DIMENSION_SEQUENCE .
 
-    COMA  shift, and go to state 111
+    COMA  shift, and go to state 107
 
     $default  reduce using rule 17 (VAR_LIST)
 
@@ -1092,237 +1106,237 @@ State 84
 
 State 85
 
-   53 LOGICAL_EXPN: LB LOGICAL_EXPN RB .
+   49 LOGICAL_EXPN: LB LOGICAL_EXPN RB .
 
-    $default  reduce using rule 53 (LOGICAL_EXPN)
+    $default  reduce using rule 49 (LOGICAL_EXPN)
 
 
 State 86
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN RB QUESM . LCB BODY RCB COLON LCB BODY RCB
 
-    LCB  shift, and go to state 112
+    LCB  shift, and go to state 108
 
 
 State 87
 
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   46             | LOGICAL_EXPN EQCOMPARE LOGICAL_EXPN .
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   42             | LOGICAL_EXPN EQCOMPARE LOGICAL_EXPN .
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
 
-    GTE  shift, and go to state 66
-    LTE  shift, and go to state 67
-    GT   shift, and go to state 68
-    LT   shift, and go to state 69
+    GTE  shift, and go to state 67
+    LTE  shift, and go to state 68
+    GT   shift, and go to state 69
+    LT   shift, and go to state 70
 
-    $default  reduce using rule 46 (LOGICAL_EXPN)
+    $default  reduce using rule 42 (LOGICAL_EXPN)
 
 
 State 88
 
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN NEQCOMPARE LOGICAL_EXPN .
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN NEQCOMPARE LOGICAL_EXPN .
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
 
-    GTE  shift, and go to state 66
-    LTE  shift, and go to state 67
-    GT   shift, and go to state 68
-    LT   shift, and go to state 69
+    GTE  shift, and go to state 67
+    LTE  shift, and go to state 68
+    GT   shift, and go to state 69
+    LT   shift, and go to state 70
 
-    $default  reduce using rule 47 (LOGICAL_EXPN)
+    $default  reduce using rule 43 (LOGICAL_EXPN)
 
 
 State 89
 
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   48             | LOGICAL_EXPN GTE LOGICAL_EXPN .
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
-
-    $default  reduce using rule 48 (LOGICAL_EXPN)
-
-
-State 90
-
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN LTE LOGICAL_EXPN .
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
-
-    $default  reduce using rule 49 (LOGICAL_EXPN)
-
-
-State 91
-
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   50             | LOGICAL_EXPN GT LOGICAL_EXPN .
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
-
-    $default  reduce using rule 50 (LOGICAL_EXPN)
-
-
-State 92
-
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
-   51             | LOGICAL_EXPN LT LOGICAL_EXPN .
-
-    $default  reduce using rule 51 (LOGICAL_EXPN)
-
-
-State 93
-
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   45             | LOGICAL_EXPN AND LOGICAL_EXPN .
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
-
-    EQCOMPARE   shift, and go to state 64
-    NEQCOMPARE  shift, and go to state 65
-    GTE         shift, and go to state 66
-    LTE         shift, and go to state 67
-    GT          shift, and go to state 68
-    LT          shift, and go to state 69
-
-    $default  reduce using rule 45 (LOGICAL_EXPN)
-
-
-State 94
-
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   44             | LOGICAL_EXPN OR LOGICAL_EXPN .
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
-
-    EQCOMPARE   shift, and go to state 64
-    NEQCOMPARE  shift, and go to state 65
-    GTE         shift, and go to state 66
-    LTE         shift, and go to state 67
-    GT          shift, and go to state 68
-    LT          shift, and go to state 69
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   44             | LOGICAL_EXPN GTE LOGICAL_EXPN .
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
 
     $default  reduce using rule 44 (LOGICAL_EXPN)
 
 
+State 90
+
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN LTE LOGICAL_EXPN .
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
+
+    $default  reduce using rule 45 (LOGICAL_EXPN)
+
+
+State 91
+
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   46             | LOGICAL_EXPN GT LOGICAL_EXPN .
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
+
+    $default  reduce using rule 46 (LOGICAL_EXPN)
+
+
+State 92
+
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
+   47             | LOGICAL_EXPN LT LOGICAL_EXPN .
+
+    $default  reduce using rule 47 (LOGICAL_EXPN)
+
+
+State 93
+
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   41             | LOGICAL_EXPN AND LOGICAL_EXPN .
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
+
+    EQCOMPARE   shift, and go to state 65
+    NEQCOMPARE  shift, and go to state 66
+    GTE         shift, and go to state 67
+    LTE         shift, and go to state 68
+    GT          shift, and go to state 69
+    LT          shift, and go to state 70
+
+    $default  reduce using rule 41 (LOGICAL_EXPN)
+
+
+State 94
+
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   40             | LOGICAL_EXPN OR LOGICAL_EXPN .
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
+
+    EQCOMPARE   shift, and go to state 65
+    NEQCOMPARE  shift, and go to state 66
+    GTE         shift, and go to state 67
+    LTE         shift, and go to state 68
+    GT          shift, and go to state 69
+    LT          shift, and go to state 70
+
+    $default  reduce using rule 40 (LOGICAL_EXPN)
+
+
 State 95
 
-   40 COMPLEX_VAR: LSB VAR RSB . COMPLEX_VAR
-   42            | LSB VAR RSB .
+   36 COMPLEX_VAR: LSB VAR RSB . COMPLEX_VAR
+   38            | LSB VAR RSB .
 
     LSB  shift, and go to state 47
 
-    $default  reduce using rule 42 (COMPLEX_VAR)
+    $default  reduce using rule 38 (COMPLEX_VAR)
 
-    COMPLEX_VAR  go to state 113
+    COMPLEX_VAR  go to state 109
 
 
 State 96
 
-   41 COMPLEX_VAR: LSB NUMINT RSB . COMPLEX_VAR
-   43            | LSB NUMINT RSB .
+   37 COMPLEX_VAR: LSB NUMINT RSB . COMPLEX_VAR
+   39            | LSB NUMINT RSB .
 
     LSB  shift, and go to state 47
 
-    $default  reduce using rule 43 (COMPLEX_VAR)
+    $default  reduce using rule 39 (COMPLEX_VAR)
 
-    COMPLEX_VAR  go to state 114
+    COMPLEX_VAR  go to state 110
 
 
 State 97
 
-   64 A_EXPN: LB . A_EXPN RB
+   61 A_EXPN: LB . A_EXPN RB
 
     LB      shift, and go to state 97
     VAR     shift, and go to state 98
     NUMINT  shift, and go to state 99
 
-    A_EXPN  go to state 115
+    A_EXPN  go to state 111
 
 
 State 98
 
-   66 A_EXPN: VAR . COMPLEX_VAR
-   67       | VAR .
+   63 A_EXPN: VAR . COMPLEX_VAR
+   64       | VAR .
 
     LSB  shift, and go to state 47
 
-    $default  reduce using rule 67 (A_EXPN)
+    $default  reduce using rule 64 (A_EXPN)
 
-    COMPLEX_VAR  go to state 116
+    COMPLEX_VAR  go to state 112
 
 
 State 99
 
-   65 A_EXPN: NUMINT .
+   62 A_EXPN: NUMINT .
 
-    $default  reduce using rule 65 (A_EXPN)
+    $default  reduce using rule 62 (A_EXPN)
 
 
 State 100
 
    29 PROGRAM_STATEMENT: VAR COMPLEX_VAR EQ A_EXPN . SC $@1 VAR EQ A_EXPN SC
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
+   53 A_EXPN: A_EXPN . PLUS A_EXPN
+   54       | A_EXPN . MINUS A_EXPN
+   55       | A_EXPN . MUL A_EXPN
+   56       | A_EXPN . DIV A_EXPN
+   57       | A_EXPN . MOD A_EXPN
+   58       | A_EXPN . EXP A_EXPN
+   59       | A_EXPN . UMINUS
+   60       | A_EXPN . UPLUS
 
-    SC      shift, and go to state 117
-    PLUS    shift, and go to state 118
-    MINUS   shift, and go to state 119
-    MUL     shift, and go to state 120
-    DIV     shift, and go to state 121
-    MOD     shift, and go to state 122
-    EXP     shift, and go to state 123
-    UPLUS   shift, and go to state 124
-    UMINUS  shift, and go to state 125
+    SC      shift, and go to state 113
+    PLUS    shift, and go to state 114
+    MINUS   shift, and go to state 115
+    MUL     shift, and go to state 116
+    DIV     shift, and go to state 117
+    MOD     shift, and go to state 118
+    EXP     shift, and go to state 119
+    UPLUS   shift, and go to state 120
+    UMINUS  shift, and go to state 121
 
 
 State 101
@@ -1330,92 +1344,71 @@ State 101
    30 PROGRAM_STATEMENT: IF LB LOGICAL_EXPN RB . LCB BODY RCB ELSE LCB BODY RCB
    31                  | IF LB LOGICAL_EXPN RB . LCB BODY RCB
 
-    LCB  shift, and go to state 126
+    LCB  shift, and go to state 122
 
 
 State 102
 
-   36 FOR_EXPN: VAR EQ . A_EXPN
+   33 PROGRAM_STATEMENT: FOR LB PROGRAM_STATEMENT LOGICAL_EXPN . SC PROGRAM_STATEMENT RB LCB BODY RCB
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
 
-    LB      shift, and go to state 97
-    VAR     shift, and go to state 98
-    NUMINT  shift, and go to state 99
-
-    A_EXPN  go to state 127
+    SC          shift, and go to state 123
+    EQCOMPARE   shift, and go to state 65
+    NEQCOMPARE  shift, and go to state 66
+    GTE         shift, and go to state 67
+    LTE         shift, and go to state 68
+    GT          shift, and go to state 69
+    LT          shift, and go to state 70
+    AND         shift, and go to state 71
+    OR          shift, and go to state 72
 
 
 State 103
 
-   38 FOR_EXPN: VAR UPLUS .
+   34 PROGRAM_STATEMENT: WHILE LB LOGICAL_EXPN RB . LCB BODY RCB
 
-    $default  reduce using rule 38 (FOR_EXPN)
+    LCB  shift, and go to state 124
 
 
 State 104
 
-   39 FOR_EXPN: VAR UMINUS .
+   35 PROGRAM_STATEMENT: DO LCB BODY RCB . WHILE LB LOGICAL_EXPN RB SC
 
-    $default  reduce using rule 39 (FOR_EXPN)
+    WHILE  shift, and go to state 125
 
 
 State 105
 
-   37 FOR_EXPN: VAR COMPLEX_VAR . EQ A_EXPN
-
-    EQ  shift, and go to state 128
-
-
-State 106
-
-   33 PROGRAM_STATEMENT: FOR LB FOR_EXPN SC . LOGICAL_EXPN SC FOR_EXPN RB LCB BODY RCB
-
-    LB      shift, and go to state 42
-    VAR     shift, and go to state 43
-    NOT     shift, and go to state 44
-    NUMINT  shift, and go to state 45
-
-    LOGICAL_EXPN  go to state 129
-
-
-State 107
-
-   34 PROGRAM_STATEMENT: WHILE LB LOGICAL_EXPN RB . LCB BODY RCB
-
-    LCB  shift, and go to state 130
-
-
-State 108
-
-   35 PROGRAM_STATEMENT: DO LCB BODY RCB . WHILE LB LOGICAL_EXPN RB SC
-
-    WHILE  shift, and go to state 131
-
-
-State 109
-
    19 DIMENSION_SEQUENCE: LSB NUMINT . RSB DIMENSION_SEQUENCE
    20                   | LSB NUMINT . RSB
 
-    RSB  shift, and go to state 132
+    RSB  shift, and go to state 126
 
 
-State 110
+State 106
 
    16 VAR_LIST: VAR COMA VAR_LIST .
 
     $default  reduce using rule 16 (VAR_LIST)
 
 
-State 111
+State 107
 
    15 VAR_LIST: VAR DIMENSION_SEQUENCE COMA . VAR_LIST
 
     VAR  shift, and go to state 56
 
-    VAR_LIST  go to state 133
+    VAR_LIST  go to state 127
 
 
-State 112
+State 108
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN RB QUESM LCB . BODY RCB COLON LCB BODY RCB
 
@@ -1430,7 +1423,7 @@ State 112
     FLOAT   shift, and go to state 32
     DOUBLE  shift, and go to state 33
 
-    BODY                    go to state 134
+    BODY                    go to state 128
     DECLARATION_STATEMENTS  go to state 35
     DECLARATION_STATEMENT   go to state 36
     DATA_TYPE               go to state 37
@@ -1438,140 +1431,140 @@ State 112
     PROGRAM_STATEMENT       go to state 39
 
 
+State 109
+
+   36 COMPLEX_VAR: LSB VAR RSB COMPLEX_VAR .
+
+    $default  reduce using rule 36 (COMPLEX_VAR)
+
+
+State 110
+
+   37 COMPLEX_VAR: LSB NUMINT RSB COMPLEX_VAR .
+
+    $default  reduce using rule 37 (COMPLEX_VAR)
+
+
+State 111
+
+   53 A_EXPN: A_EXPN . PLUS A_EXPN
+   54       | A_EXPN . MINUS A_EXPN
+   55       | A_EXPN . MUL A_EXPN
+   56       | A_EXPN . DIV A_EXPN
+   57       | A_EXPN . MOD A_EXPN
+   58       | A_EXPN . EXP A_EXPN
+   59       | A_EXPN . UMINUS
+   60       | A_EXPN . UPLUS
+   61       | LB A_EXPN . RB
+
+    RB      shift, and go to state 129
+    PLUS    shift, and go to state 114
+    MINUS   shift, and go to state 115
+    MUL     shift, and go to state 116
+    DIV     shift, and go to state 117
+    MOD     shift, and go to state 118
+    EXP     shift, and go to state 119
+    UPLUS   shift, and go to state 120
+    UMINUS  shift, and go to state 121
+
+
+State 112
+
+   63 A_EXPN: VAR COMPLEX_VAR .
+
+    $default  reduce using rule 63 (A_EXPN)
+
+
 State 113
-
-   40 COMPLEX_VAR: LSB VAR RSB COMPLEX_VAR .
-
-    $default  reduce using rule 40 (COMPLEX_VAR)
-
-
-State 114
-
-   41 COMPLEX_VAR: LSB NUMINT RSB COMPLEX_VAR .
-
-    $default  reduce using rule 41 (COMPLEX_VAR)
-
-
-State 115
-
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
-   64       | LB A_EXPN . RB
-
-    RB      shift, and go to state 135
-    PLUS    shift, and go to state 118
-    MINUS   shift, and go to state 119
-    MUL     shift, and go to state 120
-    DIV     shift, and go to state 121
-    MOD     shift, and go to state 122
-    EXP     shift, and go to state 123
-    UPLUS   shift, and go to state 124
-    UMINUS  shift, and go to state 125
-
-
-State 116
-
-   66 A_EXPN: VAR COMPLEX_VAR .
-
-    $default  reduce using rule 66 (A_EXPN)
-
-
-State 117
 
    29 PROGRAM_STATEMENT: VAR COMPLEX_VAR EQ A_EXPN SC . $@1 VAR EQ A_EXPN SC
 
     $default  reduce using rule 28 ($@1)
 
-    $@1  go to state 136
+    $@1  go to state 130
+
+
+State 114
+
+   53 A_EXPN: A_EXPN PLUS . A_EXPN
+
+    LB      shift, and go to state 97
+    VAR     shift, and go to state 98
+    NUMINT  shift, and go to state 99
+
+    A_EXPN  go to state 131
+
+
+State 115
+
+   54 A_EXPN: A_EXPN MINUS . A_EXPN
+
+    LB      shift, and go to state 97
+    VAR     shift, and go to state 98
+    NUMINT  shift, and go to state 99
+
+    A_EXPN  go to state 132
+
+
+State 116
+
+   55 A_EXPN: A_EXPN MUL . A_EXPN
+
+    LB      shift, and go to state 97
+    VAR     shift, and go to state 98
+    NUMINT  shift, and go to state 99
+
+    A_EXPN  go to state 133
+
+
+State 117
+
+   56 A_EXPN: A_EXPN DIV . A_EXPN
+
+    LB      shift, and go to state 97
+    VAR     shift, and go to state 98
+    NUMINT  shift, and go to state 99
+
+    A_EXPN  go to state 134
 
 
 State 118
 
-   56 A_EXPN: A_EXPN PLUS . A_EXPN
+   57 A_EXPN: A_EXPN MOD . A_EXPN
 
     LB      shift, and go to state 97
     VAR     shift, and go to state 98
     NUMINT  shift, and go to state 99
 
-    A_EXPN  go to state 137
+    A_EXPN  go to state 135
 
 
 State 119
 
-   57 A_EXPN: A_EXPN MINUS . A_EXPN
+   58 A_EXPN: A_EXPN EXP . A_EXPN
 
     LB      shift, and go to state 97
     VAR     shift, and go to state 98
     NUMINT  shift, and go to state 99
 
-    A_EXPN  go to state 138
+    A_EXPN  go to state 136
 
 
 State 120
 
-   58 A_EXPN: A_EXPN MUL . A_EXPN
+   60 A_EXPN: A_EXPN UPLUS .
 
-    LB      shift, and go to state 97
-    VAR     shift, and go to state 98
-    NUMINT  shift, and go to state 99
-
-    A_EXPN  go to state 139
+    $default  reduce using rule 60 (A_EXPN)
 
 
 State 121
 
-   59 A_EXPN: A_EXPN DIV . A_EXPN
+   59 A_EXPN: A_EXPN UMINUS .
 
-    LB      shift, and go to state 97
-    VAR     shift, and go to state 98
-    NUMINT  shift, and go to state 99
-
-    A_EXPN  go to state 140
+    $default  reduce using rule 59 (A_EXPN)
 
 
 State 122
-
-   60 A_EXPN: A_EXPN MOD . A_EXPN
-
-    LB      shift, and go to state 97
-    VAR     shift, and go to state 98
-    NUMINT  shift, and go to state 99
-
-    A_EXPN  go to state 141
-
-
-State 123
-
-   61 A_EXPN: A_EXPN EXP . A_EXPN
-
-    LB      shift, and go to state 97
-    VAR     shift, and go to state 98
-    NUMINT  shift, and go to state 99
-
-    A_EXPN  go to state 142
-
-
-State 124
-
-   63 A_EXPN: A_EXPN UPLUS .
-
-    $default  reduce using rule 63 (A_EXPN)
-
-
-State 125
-
-   62 A_EXPN: A_EXPN UMINUS .
-
-    $default  reduce using rule 62 (A_EXPN)
-
-
-State 126
 
    30 PROGRAM_STATEMENT: IF LB LOGICAL_EXPN RB LCB . BODY RCB ELSE LCB BODY RCB
    31                  | IF LB LOGICAL_EXPN RB LCB . BODY RCB
@@ -1587,7 +1580,7 @@ State 126
     FLOAT   shift, and go to state 32
     DOUBLE  shift, and go to state 33
 
-    BODY                    go to state 143
+    BODY                    go to state 137
     DECLARATION_STATEMENTS  go to state 35
     DECLARATION_STATEMENT   go to state 36
     DATA_TYPE               go to state 37
@@ -1595,65 +1588,21 @@ State 126
     PROGRAM_STATEMENT       go to state 39
 
 
-State 127
+State 123
 
-   36 FOR_EXPN: VAR EQ A_EXPN .
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
+   33 PROGRAM_STATEMENT: FOR LB PROGRAM_STATEMENT LOGICAL_EXPN SC . PROGRAM_STATEMENT RB LCB BODY RCB
 
-    PLUS    shift, and go to state 118
-    MINUS   shift, and go to state 119
-    MUL     shift, and go to state 120
-    DIV     shift, and go to state 121
-    MOD     shift, and go to state 122
-    EXP     shift, and go to state 123
-    UPLUS   shift, and go to state 124
-    UMINUS  shift, and go to state 125
+    LB     shift, and go to state 24
+    VAR    shift, and go to state 25
+    IF     shift, and go to state 26
+    FOR    shift, and go to state 27
+    WHILE  shift, and go to state 28
+    DO     shift, and go to state 29
 
-    $default  reduce using rule 36 (FOR_EXPN)
+    PROGRAM_STATEMENT  go to state 138
 
 
-State 128
-
-   37 FOR_EXPN: VAR COMPLEX_VAR EQ . A_EXPN
-
-    LB      shift, and go to state 97
-    VAR     shift, and go to state 98
-    NUMINT  shift, and go to state 99
-
-    A_EXPN  go to state 144
-
-
-State 129
-
-   33 PROGRAM_STATEMENT: FOR LB FOR_EXPN SC LOGICAL_EXPN . SC FOR_EXPN RB LCB BODY RCB
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
-
-    SC          shift, and go to state 145
-    EQCOMPARE   shift, and go to state 64
-    NEQCOMPARE  shift, and go to state 65
-    GTE         shift, and go to state 66
-    LTE         shift, and go to state 67
-    GT          shift, and go to state 68
-    LT          shift, and go to state 69
-    AND         shift, and go to state 70
-    OR          shift, and go to state 71
-
-
-State 130
+State 124
 
    34 PROGRAM_STATEMENT: WHILE LB LOGICAL_EXPN RB LCB . BODY RCB
 
@@ -1668,7 +1617,7 @@ State 130
     FLOAT   shift, and go to state 32
     DOUBLE  shift, and go to state 33
 
-    BODY                    go to state 146
+    BODY                    go to state 139
     DECLARATION_STATEMENTS  go to state 35
     DECLARATION_STATEMENT   go to state 36
     DATA_TYPE               go to state 37
@@ -1676,14 +1625,14 @@ State 130
     PROGRAM_STATEMENT       go to state 39
 
 
-State 131
+State 125
 
    35 PROGRAM_STATEMENT: DO LCB BODY RCB WHILE . LB LOGICAL_EXPN RB SC
 
-    LB  shift, and go to state 147
+    LB  shift, and go to state 140
 
 
-State 132
+State 126
 
    19 DIMENSION_SEQUENCE: LSB NUMINT RSB . DIMENSION_SEQUENCE
    20                   | LSB NUMINT RSB .
@@ -1692,191 +1641,165 @@ State 132
 
     $default  reduce using rule 20 (DIMENSION_SEQUENCE)
 
-    DIMENSION_SEQUENCE  go to state 148
+    DIMENSION_SEQUENCE  go to state 141
 
 
-State 133
+State 127
 
    15 VAR_LIST: VAR DIMENSION_SEQUENCE COMA VAR_LIST .
 
     $default  reduce using rule 15 (VAR_LIST)
 
 
-State 134
+State 128
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN RB QUESM LCB BODY . RCB COLON LCB BODY RCB
 
-    RCB  shift, and go to state 149
+    RCB  shift, and go to state 142
 
 
-State 135
+State 129
 
-   64 A_EXPN: LB A_EXPN RB .
-
-    $default  reduce using rule 64 (A_EXPN)
-
-
-State 136
-
-   29 PROGRAM_STATEMENT: VAR COMPLEX_VAR EQ A_EXPN SC $@1 . VAR EQ A_EXPN SC
-
-    VAR  shift, and go to state 150
-
-
-State 137
-
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   56       | A_EXPN PLUS A_EXPN .
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
-
-    MUL  shift, and go to state 120
-    DIV  shift, and go to state 121
-    MOD  shift, and go to state 122
-
-    $default  reduce using rule 56 (A_EXPN)
-
-
-State 138
-
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   57       | A_EXPN MINUS A_EXPN .
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
-
-    MUL  shift, and go to state 120
-    DIV  shift, and go to state 121
-    MOD  shift, and go to state 122
-
-    $default  reduce using rule 57 (A_EXPN)
-
-
-State 139
-
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   58       | A_EXPN MUL A_EXPN .
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
-
-    $default  reduce using rule 58 (A_EXPN)
-
-
-State 140
-
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   59       | A_EXPN DIV A_EXPN .
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
-
-    $default  reduce using rule 59 (A_EXPN)
-
-
-State 141
-
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   60       | A_EXPN MOD A_EXPN .
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
-
-    $default  reduce using rule 60 (A_EXPN)
-
-
-State 142
-
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   61       | A_EXPN EXP A_EXPN .
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
-
-    PLUS   shift, and go to state 118
-    MINUS  shift, and go to state 119
-    MUL    shift, and go to state 120
-    DIV    shift, and go to state 121
-    MOD    shift, and go to state 122
-    EXP    shift, and go to state 123
+   61 A_EXPN: LB A_EXPN RB .
 
     $default  reduce using rule 61 (A_EXPN)
 
 
-State 143
+State 130
+
+   29 PROGRAM_STATEMENT: VAR COMPLEX_VAR EQ A_EXPN SC $@1 . VAR EQ A_EXPN SC
+
+    VAR  shift, and go to state 143
+
+
+State 131
+
+   53 A_EXPN: A_EXPN . PLUS A_EXPN
+   53       | A_EXPN PLUS A_EXPN .
+   54       | A_EXPN . MINUS A_EXPN
+   55       | A_EXPN . MUL A_EXPN
+   56       | A_EXPN . DIV A_EXPN
+   57       | A_EXPN . MOD A_EXPN
+   58       | A_EXPN . EXP A_EXPN
+   59       | A_EXPN . UMINUS
+   60       | A_EXPN . UPLUS
+
+    MUL  shift, and go to state 116
+    DIV  shift, and go to state 117
+    MOD  shift, and go to state 118
+
+    $default  reduce using rule 53 (A_EXPN)
+
+
+State 132
+
+   53 A_EXPN: A_EXPN . PLUS A_EXPN
+   54       | A_EXPN . MINUS A_EXPN
+   54       | A_EXPN MINUS A_EXPN .
+   55       | A_EXPN . MUL A_EXPN
+   56       | A_EXPN . DIV A_EXPN
+   57       | A_EXPN . MOD A_EXPN
+   58       | A_EXPN . EXP A_EXPN
+   59       | A_EXPN . UMINUS
+   60       | A_EXPN . UPLUS
+
+    MUL  shift, and go to state 116
+    DIV  shift, and go to state 117
+    MOD  shift, and go to state 118
+
+    $default  reduce using rule 54 (A_EXPN)
+
+
+State 133
+
+   53 A_EXPN: A_EXPN . PLUS A_EXPN
+   54       | A_EXPN . MINUS A_EXPN
+   55       | A_EXPN . MUL A_EXPN
+   55       | A_EXPN MUL A_EXPN .
+   56       | A_EXPN . DIV A_EXPN
+   57       | A_EXPN . MOD A_EXPN
+   58       | A_EXPN . EXP A_EXPN
+   59       | A_EXPN . UMINUS
+   60       | A_EXPN . UPLUS
+
+    $default  reduce using rule 55 (A_EXPN)
+
+
+State 134
+
+   53 A_EXPN: A_EXPN . PLUS A_EXPN
+   54       | A_EXPN . MINUS A_EXPN
+   55       | A_EXPN . MUL A_EXPN
+   56       | A_EXPN . DIV A_EXPN
+   56       | A_EXPN DIV A_EXPN .
+   57       | A_EXPN . MOD A_EXPN
+   58       | A_EXPN . EXP A_EXPN
+   59       | A_EXPN . UMINUS
+   60       | A_EXPN . UPLUS
+
+    $default  reduce using rule 56 (A_EXPN)
+
+
+State 135
+
+   53 A_EXPN: A_EXPN . PLUS A_EXPN
+   54       | A_EXPN . MINUS A_EXPN
+   55       | A_EXPN . MUL A_EXPN
+   56       | A_EXPN . DIV A_EXPN
+   57       | A_EXPN . MOD A_EXPN
+   57       | A_EXPN MOD A_EXPN .
+   58       | A_EXPN . EXP A_EXPN
+   59       | A_EXPN . UMINUS
+   60       | A_EXPN . UPLUS
+
+    $default  reduce using rule 57 (A_EXPN)
+
+
+State 136
+
+   53 A_EXPN: A_EXPN . PLUS A_EXPN
+   54       | A_EXPN . MINUS A_EXPN
+   55       | A_EXPN . MUL A_EXPN
+   56       | A_EXPN . DIV A_EXPN
+   57       | A_EXPN . MOD A_EXPN
+   58       | A_EXPN . EXP A_EXPN
+   58       | A_EXPN EXP A_EXPN .
+   59       | A_EXPN . UMINUS
+   60       | A_EXPN . UPLUS
+
+    PLUS   shift, and go to state 114
+    MINUS  shift, and go to state 115
+    MUL    shift, and go to state 116
+    DIV    shift, and go to state 117
+    MOD    shift, and go to state 118
+    EXP    shift, and go to state 119
+
+    $default  reduce using rule 58 (A_EXPN)
+
+
+State 137
 
    30 PROGRAM_STATEMENT: IF LB LOGICAL_EXPN RB LCB BODY . RCB ELSE LCB BODY RCB
    31                  | IF LB LOGICAL_EXPN RB LCB BODY . RCB
 
-    RCB  shift, and go to state 151
+    RCB  shift, and go to state 144
 
 
-State 144
+State 138
 
-   37 FOR_EXPN: VAR COMPLEX_VAR EQ A_EXPN .
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
+   33 PROGRAM_STATEMENT: FOR LB PROGRAM_STATEMENT LOGICAL_EXPN SC PROGRAM_STATEMENT . RB LCB BODY RCB
 
-    PLUS    shift, and go to state 118
-    MINUS   shift, and go to state 119
-    MUL     shift, and go to state 120
-    DIV     shift, and go to state 121
-    MOD     shift, and go to state 122
-    EXP     shift, and go to state 123
-    UPLUS   shift, and go to state 124
-    UMINUS  shift, and go to state 125
-
-    $default  reduce using rule 37 (FOR_EXPN)
+    RB  shift, and go to state 145
 
 
-State 145
-
-   33 PROGRAM_STATEMENT: FOR LB FOR_EXPN SC LOGICAL_EXPN SC . FOR_EXPN RB LCB BODY RCB
-
-    VAR  shift, and go to state 76
-
-    FOR_EXPN  go to state 152
-
-
-State 146
+State 139
 
    34 PROGRAM_STATEMENT: WHILE LB LOGICAL_EXPN RB LCB BODY . RCB
 
-    RCB  shift, and go to state 153
+    RCB  shift, and go to state 146
 
 
-State 147
+State 140
 
    35 PROGRAM_STATEMENT: DO LCB BODY RCB WHILE LB . LOGICAL_EXPN RB SC
 
@@ -1885,85 +1808,85 @@ State 147
     NOT     shift, and go to state 44
     NUMINT  shift, and go to state 45
 
-    LOGICAL_EXPN  go to state 154
+    LOGICAL_EXPN  go to state 147
 
 
-State 148
+State 141
 
    19 DIMENSION_SEQUENCE: LSB NUMINT RSB DIMENSION_SEQUENCE .
 
     $default  reduce using rule 19 (DIMENSION_SEQUENCE)
 
 
-State 149
+State 142
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN RB QUESM LCB BODY RCB . COLON LCB BODY RCB
 
-    COLON  shift, and go to state 155
+    COLON  shift, and go to state 148
 
 
-State 150
+State 143
 
    29 PROGRAM_STATEMENT: VAR COMPLEX_VAR EQ A_EXPN SC $@1 VAR . EQ A_EXPN SC
 
-    EQ  shift, and go to state 156
+    EQ  shift, and go to state 149
 
 
-State 151
+State 144
 
    30 PROGRAM_STATEMENT: IF LB LOGICAL_EXPN RB LCB BODY RCB . ELSE LCB BODY RCB
    31                  | IF LB LOGICAL_EXPN RB LCB BODY RCB .
 
-    ELSE  shift, and go to state 157
+    ELSE  shift, and go to state 150
 
     $default  reduce using rule 31 (PROGRAM_STATEMENT)
 
 
-State 152
+State 145
 
-   33 PROGRAM_STATEMENT: FOR LB FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN . RB LCB BODY RCB
+   33 PROGRAM_STATEMENT: FOR LB PROGRAM_STATEMENT LOGICAL_EXPN SC PROGRAM_STATEMENT RB . LCB BODY RCB
 
-    RB  shift, and go to state 158
+    LCB  shift, and go to state 151
 
 
-State 153
+State 146
 
    34 PROGRAM_STATEMENT: WHILE LB LOGICAL_EXPN RB LCB BODY RCB .
 
     $default  reduce using rule 34 (PROGRAM_STATEMENT)
 
 
-State 154
+State 147
 
    35 PROGRAM_STATEMENT: DO LCB BODY RCB WHILE LB LOGICAL_EXPN . RB SC
-   44 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
-   45             | LOGICAL_EXPN . AND LOGICAL_EXPN
-   46             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
-   47             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
-   48             | LOGICAL_EXPN . GTE LOGICAL_EXPN
-   49             | LOGICAL_EXPN . LTE LOGICAL_EXPN
-   50             | LOGICAL_EXPN . GT LOGICAL_EXPN
-   51             | LOGICAL_EXPN . LT LOGICAL_EXPN
+   40 LOGICAL_EXPN: LOGICAL_EXPN . OR LOGICAL_EXPN
+   41             | LOGICAL_EXPN . AND LOGICAL_EXPN
+   42             | LOGICAL_EXPN . EQCOMPARE LOGICAL_EXPN
+   43             | LOGICAL_EXPN . NEQCOMPARE LOGICAL_EXPN
+   44             | LOGICAL_EXPN . GTE LOGICAL_EXPN
+   45             | LOGICAL_EXPN . LTE LOGICAL_EXPN
+   46             | LOGICAL_EXPN . GT LOGICAL_EXPN
+   47             | LOGICAL_EXPN . LT LOGICAL_EXPN
 
-    RB          shift, and go to state 159
-    EQCOMPARE   shift, and go to state 64
-    NEQCOMPARE  shift, and go to state 65
-    GTE         shift, and go to state 66
-    LTE         shift, and go to state 67
-    GT          shift, and go to state 68
-    LT          shift, and go to state 69
-    AND         shift, and go to state 70
-    OR          shift, and go to state 71
+    RB          shift, and go to state 152
+    EQCOMPARE   shift, and go to state 65
+    NEQCOMPARE  shift, and go to state 66
+    GTE         shift, and go to state 67
+    LTE         shift, and go to state 68
+    GT          shift, and go to state 69
+    LT          shift, and go to state 70
+    AND         shift, and go to state 71
+    OR          shift, and go to state 72
 
 
-State 155
+State 148
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN RB QUESM LCB BODY RCB COLON . LCB BODY RCB
 
-    LCB  shift, and go to state 160
+    LCB  shift, and go to state 153
 
 
-State 156
+State 149
 
    29 PROGRAM_STATEMENT: VAR COMPLEX_VAR EQ A_EXPN SC $@1 VAR EQ . A_EXPN SC
 
@@ -1971,31 +1894,47 @@ State 156
     VAR     shift, and go to state 98
     NUMINT  shift, and go to state 99
 
-    A_EXPN  go to state 161
+    A_EXPN  go to state 154
 
 
-State 157
+State 150
 
    30 PROGRAM_STATEMENT: IF LB LOGICAL_EXPN RB LCB BODY RCB ELSE . LCB BODY RCB
 
-    LCB  shift, and go to state 162
+    LCB  shift, and go to state 155
 
 
-State 158
+State 151
 
-   33 PROGRAM_STATEMENT: FOR LB FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN RB . LCB BODY RCB
+   33 PROGRAM_STATEMENT: FOR LB PROGRAM_STATEMENT LOGICAL_EXPN SC PROGRAM_STATEMENT RB LCB . BODY RCB
 
-    LCB  shift, and go to state 163
+    LB      shift, and go to state 24
+    VAR     shift, and go to state 25
+    IF      shift, and go to state 26
+    FOR     shift, and go to state 27
+    WHILE   shift, and go to state 28
+    DO      shift, and go to state 29
+    INT     shift, and go to state 30
+    CHAR    shift, and go to state 31
+    FLOAT   shift, and go to state 32
+    DOUBLE  shift, and go to state 33
+
+    BODY                    go to state 156
+    DECLARATION_STATEMENTS  go to state 35
+    DECLARATION_STATEMENT   go to state 36
+    DATA_TYPE               go to state 37
+    PROGRAM_STATEMENTS      go to state 38
+    PROGRAM_STATEMENT       go to state 39
 
 
-State 159
+State 152
 
    35 PROGRAM_STATEMENT: DO LCB BODY RCB WHILE LB LOGICAL_EXPN RB . SC
 
-    SC  shift, and go to state 164
+    SC  shift, and go to state 157
 
 
-State 160
+State 153
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN RB QUESM LCB BODY RCB COLON LCB . BODY RCB
 
@@ -2010,7 +1949,7 @@ State 160
     FLOAT   shift, and go to state 32
     DOUBLE  shift, and go to state 33
 
-    BODY                    go to state 165
+    BODY                    go to state 158
     DECLARATION_STATEMENTS  go to state 35
     DECLARATION_STATEMENT   go to state 36
     DATA_TYPE               go to state 37
@@ -2018,30 +1957,30 @@ State 160
     PROGRAM_STATEMENT       go to state 39
 
 
-State 161
+State 154
 
    29 PROGRAM_STATEMENT: VAR COMPLEX_VAR EQ A_EXPN SC $@1 VAR EQ A_EXPN . SC
-   56 A_EXPN: A_EXPN . PLUS A_EXPN
-   57       | A_EXPN . MINUS A_EXPN
-   58       | A_EXPN . MUL A_EXPN
-   59       | A_EXPN . DIV A_EXPN
-   60       | A_EXPN . MOD A_EXPN
-   61       | A_EXPN . EXP A_EXPN
-   62       | A_EXPN . UMINUS
-   63       | A_EXPN . UPLUS
+   53 A_EXPN: A_EXPN . PLUS A_EXPN
+   54       | A_EXPN . MINUS A_EXPN
+   55       | A_EXPN . MUL A_EXPN
+   56       | A_EXPN . DIV A_EXPN
+   57       | A_EXPN . MOD A_EXPN
+   58       | A_EXPN . EXP A_EXPN
+   59       | A_EXPN . UMINUS
+   60       | A_EXPN . UPLUS
 
-    SC      shift, and go to state 166
-    PLUS    shift, and go to state 118
-    MINUS   shift, and go to state 119
-    MUL     shift, and go to state 120
-    DIV     shift, and go to state 121
-    MOD     shift, and go to state 122
-    EXP     shift, and go to state 123
-    UPLUS   shift, and go to state 124
-    UMINUS  shift, and go to state 125
+    SC      shift, and go to state 159
+    PLUS    shift, and go to state 114
+    MINUS   shift, and go to state 115
+    MUL     shift, and go to state 116
+    DIV     shift, and go to state 117
+    MOD     shift, and go to state 118
+    EXP     shift, and go to state 119
+    UPLUS   shift, and go to state 120
+    UMINUS  shift, and go to state 121
 
 
-State 162
+State 155
 
    30 PROGRAM_STATEMENT: IF LB LOGICAL_EXPN RB LCB BODY RCB ELSE LCB . BODY RCB
 
@@ -2056,7 +1995,7 @@ State 162
     FLOAT   shift, and go to state 32
     DOUBLE  shift, and go to state 33
 
-    BODY                    go to state 167
+    BODY                    go to state 160
     DECLARATION_STATEMENTS  go to state 35
     DECLARATION_STATEMENT   go to state 36
     DATA_TYPE               go to state 37
@@ -2064,80 +2003,57 @@ State 162
     PROGRAM_STATEMENT       go to state 39
 
 
-State 163
+State 156
 
-   33 PROGRAM_STATEMENT: FOR LB FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN RB LCB . BODY RCB
+   33 PROGRAM_STATEMENT: FOR LB PROGRAM_STATEMENT LOGICAL_EXPN SC PROGRAM_STATEMENT RB LCB BODY . RCB
 
-    LB      shift, and go to state 24
-    VAR     shift, and go to state 25
-    IF      shift, and go to state 26
-    FOR     shift, and go to state 27
-    WHILE   shift, and go to state 28
-    DO      shift, and go to state 29
-    INT     shift, and go to state 30
-    CHAR    shift, and go to state 31
-    FLOAT   shift, and go to state 32
-    DOUBLE  shift, and go to state 33
-
-    BODY                    go to state 168
-    DECLARATION_STATEMENTS  go to state 35
-    DECLARATION_STATEMENT   go to state 36
-    DATA_TYPE               go to state 37
-    PROGRAM_STATEMENTS      go to state 38
-    PROGRAM_STATEMENT       go to state 39
+    RCB  shift, and go to state 161
 
 
-State 164
+State 157
 
    35 PROGRAM_STATEMENT: DO LCB BODY RCB WHILE LB LOGICAL_EXPN RB SC .
 
     $default  reduce using rule 35 (PROGRAM_STATEMENT)
 
 
-State 165
+State 158
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN RB QUESM LCB BODY RCB COLON LCB BODY . RCB
 
-    RCB  shift, and go to state 169
+    RCB  shift, and go to state 162
 
 
-State 166
+State 159
 
    29 PROGRAM_STATEMENT: VAR COMPLEX_VAR EQ A_EXPN SC $@1 VAR EQ A_EXPN SC .
 
     $default  reduce using rule 29 (PROGRAM_STATEMENT)
 
 
-State 167
+State 160
 
    30 PROGRAM_STATEMENT: IF LB LOGICAL_EXPN RB LCB BODY RCB ELSE LCB BODY . RCB
 
-    RCB  shift, and go to state 170
+    RCB  shift, and go to state 163
 
 
-State 168
+State 161
 
-   33 PROGRAM_STATEMENT: FOR LB FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN RB LCB BODY . RCB
+   33 PROGRAM_STATEMENT: FOR LB PROGRAM_STATEMENT LOGICAL_EXPN SC PROGRAM_STATEMENT RB LCB BODY RCB .
 
-    RCB  shift, and go to state 171
+    $default  reduce using rule 33 (PROGRAM_STATEMENT)
 
 
-State 169
+State 162
 
    32 PROGRAM_STATEMENT: LB LOGICAL_EXPN RB QUESM LCB BODY RCB COLON LCB BODY RCB .
 
     $default  reduce using rule 32 (PROGRAM_STATEMENT)
 
 
-State 170
+State 163
 
    30 PROGRAM_STATEMENT: IF LB LOGICAL_EXPN RB LCB BODY RCB ELSE LCB BODY RCB .
 
     $default  reduce using rule 30 (PROGRAM_STATEMENT)
-
-
-State 171
-
-   33 PROGRAM_STATEMENT: FOR LB FOR_EXPN SC LOGICAL_EXPN SC FOR_EXPN RB LCB BODY RCB .
-
-    $default  reduce using rule 33 (PROGRAM_STATEMENT)

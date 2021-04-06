@@ -3,6 +3,6 @@
 int main()
 {
 	int i;
-	char str[20],**ptr;
+	char str[20],**ptr[10];
 	int***p;
 }
