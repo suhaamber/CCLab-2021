@@ -44,7 +44,7 @@ int num_int;
 
 %right EXP
 %right NOT QUESM COLON
-%right STAR AMPERSAND
+%right AMPERSAND
 
 %token<data_type>INT
 %token<data_type>CHAR
@@ -150,13 +150,15 @@ ASSIGNMENT:      VAR EQ EXPRESSION
 						printf("\n variable \"%s\" undeclared\n",$1);exit(0);
 					}
 					expn_type=-1;	
-					dimension_count = 1; 
+					dimension_count = 0; 
 					for(int i=0; i<5; i++) 
 					{
 						empty_array[i] = 0; 
 					}
 				}
                 |STAR_SEQUENCE EXPRESSION EQ EXPRESSION
+				|EXPRESSION UPLUS
+				|EXPRESSION UMINUS
 
 EXPRESSION:      AMPERSAND EXPRESSION
                 |NOT EXPRESSION
@@ -208,26 +210,17 @@ EXPRESSION:      AMPERSAND EXPRESSION
                 |LB EXPRESSION RB
                 |NUMINT
 
-DIMENSION_SEQUENCE:   LSB NUMINT RSB DIMENSION_SEQUENCE
+DIMENSION_SEQUENCE:   LSB NUMINT RSB 
 					{
 						empty_array[dimension_count] = $2; 
 						dimension_count++;
-					}
-					| LSB VAR RSB DIMENSION_SEQUENCE
+					} DIMENSION_SEQUENCE
+					| LSB VAR RSB 
 					{
 						empty_array[dimension_count] = 0; 
 						dimension_count++;
-					}
-					| LSB VAR RSB                        
-					{
-						empty_array[dimension_count] = 0; 
-						dimension_count++;
-					}					
-					| LSB NUMINT RSB
-					{
-						empty_array[dimension_count] = $2; 
-						dimension_count++;
-					}
+					} DIMENSION_SEQUENCE
+					| /*epsilon*/
 
 STAR_SEQUENCE: STAR STAR_SEQUENCE
                 | STAR
@@ -340,7 +333,7 @@ int lookup_in_table(char var[30], int this_is_array, int this_dim_seq[5], int th
 			{
 				for(int j=0; j<5; j++)
 				{
-					if(this_dim_seq[j]<0 || var_list[i].dimension_sequence[j]<=this_dim_seq[j])
+					if(this_dim_seq[j]!=0 && (this_dim_seq[j]<0 || var_list[i].dimension_sequence[j]<=this_dim_seq[j]))
 					{
 						printf("Array index out of bounds. Line number %d\n", yylineno); 
 						exit(0); 

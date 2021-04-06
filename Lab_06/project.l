@@ -17,8 +17,6 @@
 "float" {yylval.data_type=3; return FLOAT;}
 "main" {return MAIN;}
 ([a-z]+|[A-Z]+)+["."][h] {return HEADER_FILE;}
-".h" {return DOTH; }
-".c" {return DOTC; }
 "#" {return HASH; }
 "("	{return LB;}
 ")"	{return RB;}
